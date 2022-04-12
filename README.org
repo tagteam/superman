@@ -8,7 +8,7 @@
 
 * Welcome
 
-Superman is a project manager for emacs based on [[http://orgmode.org/][org-mode]]
+Superman is a project manager for emacs based on [[http://orgmode.org/][org-mode]].
 
 * Download
 
@@ -17,7 +17,7 @@ Superman is a project manager for emacs based on [[http://orgmode.org/][org-mode
 Switch 
    
 #+BEGIN_SRC sh
-git clone git@github.com:kkholst/ProjectManager.git
+git clone git@github.com:tagteam/superman.git
 #+END_SRC
 
 * Install
@@ -25,12 +25,8 @@ git clone git@github.com:kkholst/ProjectManager.git
 Add the following lines to your .emacs:
 
 #+BEGIN_SRC  emacs-lisp :export code
-(add-to-list 'load-path (concat (getenv "HOME") "/emacs-genome/snps/ProjectManager/lisp/"))
-(require 'org)
-(require 'org-agenda)
-(require 'org-capture)
-(require 'superman-manager)
-(superman-parse-projects)
+(straight-use-package
+ '(ess-smart-equal :type git :host github :repo "tagteam/superman"))  
 #+END_SRC
   
 
