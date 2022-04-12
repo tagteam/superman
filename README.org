@@ -1,14 +1,9 @@
-#+BEGIN_EXAMPLE
- ___ _   _ _ __   ___ _ __ _ __ ___   __ _ _ __  
-/ __| | | | '_ \ / _ \ '__| '_ ` _ \ / _` | '_ \ 
-\__ \ |_| | |_) |  __/ |  | | | | | | (_| | | | |
-|___/\__,_| .__/ \___|_|  |_| |_| |_|\__,_|_| |_|
-          |_|                                    
-#+END_EXAMPLE
-
 * Welcome
 
-Superman is a project manager for emacs based on [[http://orgmode.org/][org-mode]].
+Superman is a project manager for emacs based on [[http://orgmode.org/][org-mode]]. It includes
+a method (called file-list) which list files within a project, or any
+other directory, based on file name, directory name, last modified
+date, and file size.
 
 * Download
 
@@ -29,6 +24,7 @@ Add the following lines to your .emacs:
  '(ess-smart-equal :type git :host github :repo "tagteam/superman"))  
 #+END_SRC
   
+* Todo
 
-
-
+- Fix file-list-update
+- Fix setup of project page
