@@ -578,6 +578,8 @@ file-list display buffers unless DIR matches the directories associated with
 
   
 (defun file-list-mode ()
+  "Alist-based file manager. Files below a directory are
+recursively read, filtered and displayed for bulk operations. "
   (interactive)
   (kill-all-local-variables)
   (use-local-map file-list-mode-map)
