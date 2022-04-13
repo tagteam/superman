@@ -34,7 +34,7 @@
 
 ;;; Code:
 
-
+(require 'cl-lib)
 ;;{{{ finding buffers
 
 (defun superman-find-thing (thing project)
