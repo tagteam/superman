@@ -1,6 +1,6 @@
 ;;; superman-git.el --- Summary of project contents and adding information to projects
 
-;; Copyright (C) 2012-2021  Klaus Kähler Holst, Thomas Alexander Gerds
+;; Copyright (C) 2012-2022  Klaus Kähler Holst, Thomas Alexander Gerds
 
 ;; Authors: Klaus Kähler Holst <kkho@biostat.ku.dk>
 ;;          Thomas Alexander Gerds <tag@biostat.ku.dk>

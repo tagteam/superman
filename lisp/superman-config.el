@@ -1,6 +1,6 @@
 ;;; superman-config.el --- Project specific window configurations
 
-;; Copyright (C) 2012-2016  Thomas Alexander Gerds
+;; Copyright (C) 2012-2022  Thomas Alexander Gerds
 
 ;; Author: Thomas Alexander Gerds <tag@biostat.ku.dk>
 ;; Keywords: tools
@@ -22,13 +22,13 @@
 
 ;; 
 ;; It may be counterintuitive, but saving a window configuration is not
-;; so easy. One reason are windows showing unsaved, temporary stuff such
-;; as file-unrelated buffers. Also, the dimensions of
+;; so easy. One reason is that there are windows showing unsaved buffers and
+;; temporary file-unrelated buffers. Also, the dimensions of emacs'
 ;; frames and windows depend on the current screen and most people will
 ;; at least occasionally work on different screens.
 
 ;; What we could do is restore from saved files and certain
-;; file-unrelated buffers, as for example a buffer showing a shell. We
+;; file-unrelated buffers, as for example a buffer showing a shell/terminal. We
 ;; can also save the number of windows and the horizontal and vertical
 ;; splits in the current frame. 
 

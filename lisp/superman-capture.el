@@ -26,6 +26,8 @@
 
 ;;; Code:
 
+(require 'org-macs)
+
 ;;{{{ variables and hooks
 
 (defvar superman-setup-scene-hook nil
