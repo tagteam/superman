@@ -1,6 +1,6 @@
 ;;; superman-manager.el --- org project manager
 
-;; Copyright (C) 2013-2015  Thomas Alexander Gerds
+;; Copyright (C) 2013-2022  Thomas Alexander Gerds
 
 ;; Authors:
 ;; Thomas Alexander Gerds <tag@biostat.ku.dk>
@@ -805,7 +805,7 @@ Examples:
 The list is re-arranged such that 'superman-current-project'
 is always the first choice. 
 If PROMPT is a string use it to ask for project."
-  (let* ((plist superman-project-alist)
+  (let* ((plist (copy-alist superman-project-alist))
 	 (project-array (mapcar 'superman-format-project
 				(if (not superman-current-project)
 				    plist
@@ -817,8 +817,8 @@ If PROMPT is a string use it to ask for project."
 			      (> 
 			       (org-time-stamp-to-now (cdr (assoc "lastvisit" (cadr x))) 'seconds)
 			       (org-time-stamp-to-now (cdr (assoc "lastvisit" (cadr y))) 'seconds))))
-	  (ido-completing-read (if (stringp prompt) prompt "Project: ")
-				   (mapcar 'car project-array))))
+		(ido-completing-read (if (stringp prompt) prompt "Project: ")
+				     (mapcar 'car project-array))))
 	 (nickname (cdr (assoc key project-array))))
     (assoc nickname superman-project-alist)))
 

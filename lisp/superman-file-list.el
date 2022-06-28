@@ -2,7 +2,7 @@
 
 ;;; superman-file-list.el --- working with a list of filenames
 ;;
-;; Copyright (C) 2002-2016, Thomas A. Gerds <tag@biostat.ku.dk>
+;; Copyright (C) 2002-2022, Thomas A. Gerds <tag@biostat.ku.dk>
 ;; Version: 1.1.5 (11 August 2016)
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -1106,7 +1106,7 @@ or by file-name if there is no sort-key yet"
 	 (save-excursion
 	   (beginning-of-line)
 	   (if (looking-at "\\(^[ \t]+\\)\\([0-9]+\\)\\( : \\)")
-	       (match-string 2) nil)))
+	       (match-string-no-properties 2) nil)))
 	(file-name (file-list-file-at-point))
 	fun)
     (cond ((and magic
@@ -1130,12 +1130,13 @@ or by file-name if there is no sort-key yet"
 		 ((= arg 4) (switch-to-buffer-other-window (current-buffer)))
 		 ((= arg 5) (switch-to-buffer-other-frame (current-buffer)))
 		 (t nil))
-	   (if (functionp 'org-open-at-point)
-	       (org-open-file file-name)
-	     (find-file file-name))
-	   (when grep-line
-	     (goto-char (point-min))
-	     (forward-line (1- (string-to-number grep-line))))))))
+	   (if grep-line
+	       (progn (find-file file-name)
+		      (goto-char (point-min))
+		      (forward-line (1- (string-to-number grep-line))))
+	     (if (functionp 'org-open-at-point)
+		 (org-open-file file-name)
+	       (find-file file-name)))))))
 
 (defun file-list-choose-file-no-visit ()
   (interactive)
