@@ -27,7 +27,7 @@
 ;;; Code:
 
 (require 'org-macs)
-
+(require 'mm-decode)
 ;;{{{ variables and hooks
 
 (defvar superman-setup-scene-hook nil
