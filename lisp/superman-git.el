@@ -80,7 +80,8 @@ and after CMD, respectively."
   (or (superman-git-p (get-text-property (point-min) 'git-dir))
       (let ((pro (superman-view-current-project)))
 	(superman-git-init-directory (superman-get-location pro))
-	(superman-redo))))
+	(kill-this-buffer)
+	(superman-git-display pro))))
 
 (defun superman-git-init-project (&optional project)
   "Put project under git control."
@@ -728,17 +729,12 @@ see M-x manual-entry RET git-diff RET.")
 ;;{{{ git display
 
 (defun superman-initialize-git-control-string (dir)
-  (concat "\n\nDirectory " dir " is not yet under git control.\n"
-	  "press `I' or this button to: " 
-	  (superman-make-button
-	   "initialize git control"
-	   '(:fun superman-git-init
-		  :face superman-capture-button-face
-		  (concat
-		   :help "Initialize git repository at " dir)))
-	  "\nor connect this project to a github repository:\n"
-	  "Examples:\ngit remote add origin git@github.com:tagteam/biobuntu.git"
-	  "\ngit clone git@github.com:tagteam/biobuntu.git\n"))
+  (concat "The project directory " dir " is not yet under git control.\n"
+	  "\nTo initialize git control press `I'.\n\n" 
+	  "\nYou may also want to connect this project to a github repository:\n\n"
+	  "Examples on how to connect to a github repository:
+  $ git remote add origin git@github.com:tagteam/biobuntu.git
+  $ git clone git@github.com:tagteam/biobuntu.git\n"))
 
 (defun superman-git-display (&optional project)
   "Display git control for the current project's directory
@@ -866,6 +862,7 @@ git command. NAME is used to make the section heading.
 	   (pre-hook (nth 3 rest))
 	   (post-hook (nth 4 rest))
 	   (count 0)
+	   (line nil)
 	   (cmd (concat "cd " dir ";" superman-cmd-git " "
 			(with-current-buffer view-buf
 			  (eval (nth 1 rest)))
@@ -1340,6 +1337,7 @@ This function should be bound to a key or button."
 repository of PROJECT which is located at DIR."
   (let* ((balls superman-git-display-diff-balls)
 	 (count 0)
+	 (line nil)
 	 (name "Git-diff")
 	 (nickname (get-text-property (point-min) 'nickname))
 	 (git-dir (or dir (get-text-property (point-min) 'git-dir)))
