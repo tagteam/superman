@@ -37,6 +37,8 @@
 
 ;;; Code:
 
+(require 'tex-site)
+(require 'tex-buf)
 ;; see also superman-run-R-or-export-as in org-snps.el
 (defun superman-control-export (&optional arg)
   "If inside babel src code block, evaluate block
@@ -79,7 +81,7 @@ This function works outside R src blocks. Inside R src block
 	 (tex-buf (get-file-buffer tex-file))
 	 ;; (help-buf (concat "*Superman-export-control: " (file-name-nondirectory org-file) "*"))
 	 (wconf (current-window-configuration))
-	 (process (TeX-process tex-file))
+	 (process (when tex-buf (TeX-process tex-file)))
 	 R-buf
 	 R-proc)
     (save-buffer)

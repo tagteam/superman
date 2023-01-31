@@ -123,8 +123,17 @@
    (widen))
 
 
+(defun superman-accept-outlook ()
+  (interactive)
+  (when (eq major-mode 'gnus-summary-mode)
+    (other-window 1))
+  (superman-google-export-outlook dont-ask)
+  (goto-char (point-min))
+  (when (re-search-forward " Accept " nil t)
+    (gnus-article-press-button)))
+
 ;; gnus articles med outlook invitation
-(defun superman-google-export-outlook ()
+(defun superman-google-export-outlook (&optional dont-ask)
   (interactive)
   (save-window-excursion
     (goto-char (point-min))
@@ -180,7 +189,8 @@
 			" --description ''"
 			" --remind '" (or g-remind "0") "'"))
 	       (g-command
-		(read-string "Google calendar entry: " pre-command)))
+		(if dont-ask pre-command
+		  (read-string "Google calendar entry: " pre-command))))
 	  (when (> (length g-command) 0)
 	    (superman-run-cmd g-command
 			      "*Superman-google-calendar*"
