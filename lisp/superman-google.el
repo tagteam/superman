@@ -127,7 +127,7 @@
   (interactive)
   (when (eq major-mode 'gnus-summary-mode)
     (other-window 1))
-  (superman-google-export-outlook dont-ask)
+  (superman-google-export-outlook 'dont-ask)
   (goto-char (point-min))
   (when (re-search-forward " Accept " nil t)
     (gnus-article-press-button)))
