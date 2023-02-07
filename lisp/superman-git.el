@@ -220,7 +220,7 @@ Optional argument BUF is passed to `superman-run-cmd'."
 			      (shell-command-to-string
 			       (concat "cd " dir "; " superman-cmd-git " branch -a ")) "\n"))))
 	 (current (if branch-list (car (cl-member-if (lambda (x) (string-match "^\\*" x)) branch-list))
-		    "master"))
+		    "main"))
 	 (others (when branch-list (delete current branch-list))))
     (cons current others)))
 
@@ -1052,7 +1052,8 @@ Translate the branch names into buttons."
 	   (current-branch (car branch-list))
 	   (remote (cl-member-if
 		    (lambda (x)
-		      (string-match "^remotes/" x)) branch-list))
+		      (string-match "^remotes/" x))
+		    branch-list))
 	   (other-branches (cdr branch-list))
 	   (title "Branch:"))
       (put-text-property 0 (length title) 'face 'org-level-2 title)
@@ -1119,7 +1120,7 @@ Translate the branch names into buttons."
 			 (string-match "remotes/git-svn" x)) remote))
 	       (git-p (cl-member-if
 		       (lambda (x)
-			 (string-match "remotes/origin/master" x)) remote))
+			 (string-match "remotes/origin/main" x)) remote))
 	       (remote-cmd (if git-p
 			       (if svn-p
 				   (concat
@@ -1157,7 +1158,7 @@ Translate the branch names into buttons."
 	  (when git-p
 	    (insert
 	     " "
-	     (superman-make-git-button " merge origin/master " "[merge]" loc nil "run 'git merge origin/master' to merge\nfetched changes")))
+	     (superman-make-git-button " merge origin/main " "[merge]" loc nil "run 'git merge origin/main' to merge\nfetched changes")))
 	  ;; pull
 	  (when git-p
 	    (insert
@@ -1303,9 +1304,10 @@ This function should be bound to a key or button."
       (superman-view-insert-git-branches git-dir)
       ;; delete control line
       (when control-start
-	  (goto-char control-start)
+	(goto-char control-start)
 	(delete-region (point-at-bol) (1+ (point-at-eol)))
-	;; (superman-view-insert-git-control)
+	(insert "\n")
+	(superman-view-insert-git-project-buttons)
 	)))
   (when (and superman-git-mode
 	     (next-single-property-change (point-min) 'cat))
