@@ -1143,7 +1143,7 @@ Translate the branch names into buttons."
 			     (concat "`" ,superman-cmd-git " " ,remote-cmd
 				     " run below \n" ,loc "' returns:\n\n")))
 			  :face superman-header-button-face
-			  :help "Show origin of remote repository")))
+			  :help (concat "Show origin of remote repository: " ,remote-cmd))))
 	  ;; fetch git
 	  (when git-p
 	    (insert
@@ -1306,8 +1306,8 @@ This function should be bound to a key or button."
       (when control-start
 	(goto-char control-start)
 	(delete-region (point-at-bol) (1+ (point-at-eol)))
-	(insert "\n")
 	(superman-view-insert-git-project-buttons)
+	(insert "\n")
 	)))
   (when (and superman-git-mode
 	     (next-single-property-change (point-min) 'cat))
