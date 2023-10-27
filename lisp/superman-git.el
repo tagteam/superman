@@ -254,8 +254,8 @@ current prompt for project."
     (when superman-view-mode (superman-redo))))
 
 (defun superman-git-checkout-branch (&optional dir branch)
-  "Checkout branch in git directory DIR. If DIR is nil
-use the location of the current project, if no project is current
+  "Checkout branch of the git repository DIR. If DIR is nil
+use the location of the current project, if no project is currently active, 
 prompt for project."
   (interactive)
   (let* ((dir (or dir
@@ -620,9 +620,7 @@ see M-x manual-entry RET git-diff RET.")
 		 "Highlight differences"
 		 `(:fun (lambda () (interactive)
 			  (superman-compare-files
-			   ,(concat default-directory 
-				    (substring file
-					       1 (length file)))
+			   ,(concat dir "/" (substring file 1 (length file)))
 			   ,a
 			   ,b))
 			:face superman-next-project-button-face
@@ -1093,7 +1091,7 @@ Translate the branch names into buttons."
 			,(buffer-name view-buf))))
 	       (button (superman-make-button
 			b `(:fun ,fun :face font-lock-comment-face
-				 :help "Checkout branch"))))
+				 :help (concat "Run: " ,superman-cmd-git " checkout " ,b)))))
 	  (setq other-branches (cdr other-branches))
 	  (put-text-property 0 1 'superman-header-marker t button)
 	  (insert "[" button "]  ")))

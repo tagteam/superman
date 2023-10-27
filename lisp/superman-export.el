@@ -38,7 +38,7 @@
 ;;; Code:
 
 (require 'tex-site)
-(require 'tex-buf)
+;; (require 'tex-buf)
 ;; see also superman-run-R-or-export-as in org-snps.el
 (defun superman-control-export (&optional arg)
   "If inside babel src code block, evaluate block
