@@ -1803,7 +1803,8 @@ properties such as balls for the section.
 	   (view-buf (current-buffer))
 	   (index-buf (when marker (marker-buffer marker)))
 	   (buffer-read-only nil))
-      (org-cut-subtree)
+      (delete-region (point-at-bol) (point-max))
+      ;; (org-cut-subtree)
       (superman-format-cat 
        cat index-buf
        view-buf
