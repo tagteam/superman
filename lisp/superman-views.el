@@ -3001,6 +3001,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 	     (match-string 3)
 	   (error "Not in property block"))))
     (with-temp-buffer
+      (org-mode)
       (insert thing)
       (backward-char 1)
       (org-open-at-point))))
