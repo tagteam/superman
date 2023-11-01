@@ -1155,10 +1155,11 @@ If DONT-MOVE is non-nil stay at item."
   (interactive "P")
   arg
   (save-excursion
-    (save-restriction
-      (org-narrow-to-subtree)
+    ;; (save-restriction
+    ;; (org-narrow-to-subtree)
+    (goto-char (point-min))
       (superman-loop 'superman-toggle-mark
-		     (list (if arg nil 'on))))))
+		     (list (if arg nil 'on)))))
 
 (defun superman-view-invert-marks (&optional arg)
   (interactive "P")
