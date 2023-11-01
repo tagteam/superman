@@ -766,7 +766,8 @@ for git and other actions like commit, history search and pretty log-view."
 	       (superman-return))
 	      ((re-search-forward org-link-any-re nil t)
 	       (re-search-forward org-link-any-re nil t)
-	       (superman-open-at-point))
+	       (org-open-at-point))
+	      ;; (superman-open-at-point))
 	      (t
 	       (widen)
 	       (outline-show-all)
@@ -2980,7 +2981,8 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 			(point))
 		      t)
 		     (progn
-		       (superman-open-at-point)
+		       ;; (superman-open-at-point)
+		       (org-open-at-point)
 		       t)
 		   nil)))
 	      (t
@@ -2992,19 +2994,19 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 
 (defun superman-open-at-point ()
   (interactive)
-  "Wrapper for org-open-at-point to fix a (temporary?) org-feature
- which disables opening links in properties."
+  "Wrapper for org-open-at-point."
   (let ((thing
 	 (if (save-excursion
 	       (beginning-of-line)
 	       (looking-at org-property-re))
 	     (match-string 3)
 	   (error "Not in property block"))))
-    (with-temp-buffer
-      (org-mode)
-      (insert thing)
-      (backward-char 1)
-      (org-open-at-point))))
+    (org-open-at-point)))
+    ;; (with-temp-buffer
+      ;; (org-mode)
+      ;; (insert thing)
+      ;; (backward-char 1)
+      ;; (org-open-at-point))))
   
 
 (defun superman-view-index ()
