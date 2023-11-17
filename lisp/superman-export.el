@@ -45,10 +45,12 @@
 with `superman-ess-eval-and-go' and otherwise export buffer
 with `superman-org-export-as'."
   (interactive "p")
-  (if (and (string= (car (org-babel-get-src-block-info)) "R")
-	   ;; since org-element-at-point finds the nearest element,
-	   ;; need to test if really sitting inside the block:
-	   (org-babel-where-is-src-block-head))
+  (if (and
+       (ignore-errors
+	 (string= (car (org-babel-get-src-block-info)) "R"))
+       ;; since org-element-at-point finds the nearest element,
+       ;; need to test if really sitting inside the block:
+       (org-babel-where-is-src-block-head))
       (superman-ess-eval-and-go arg)
     ;; (progn
     ;; (ess-switch-to-end-of-ESS)
@@ -106,7 +108,7 @@ This function works outside R src blocks. Inside R src block
 	  (while (and (not R-buf)
 		      (re-search-forward org-block-regexp nil t))
 	    (beginning-of-line) ;; move inside block
-	    (let ((info (org-babel-get-src-block-info)))
+	    (let ((info (ignore-errors (org-babel-get-src-block-info))))
 	      (and (string= (car info) "R")
 		   (setq R-buf (cdr (assoc ':session (caddr info))))))))))
     (when (and R-buf (buffer-live-p R-buf))
@@ -233,21 +235,21 @@ is either called superman-export-as-TARGET or org-export-to-TARGET."
 	      (cond ((string= superman-babel-target "this-block")
 		     (beginning-of-line)
 		     ;; (if (string= (car (org-babel-get-src-block-info)) "R")
-		     (if (org-babel-get-src-block-info)
-					 (org-babel-execute-src-block)
+		     (if (ignore-errors (org-babel-get-src-block-info))
+			 (org-babel-execute-src-block)
 		       ;; (superman-ess-eval-and-go)
-				       (message "Cursor is not in src-block")))
+		       (message "Cursor is not in src-block")))
 		    ((string= superman-babel-target "all-blocks")
 		     (org-babel-execute-buffer)))) t]
     ["clear"
      (lambda (&optional arg) (interactive)
-	 (cond ((string= superman-babel-target "all-blocks")
-		(org-babel-clear-all-results))
-	       ((string= superman-babel-target "this-block")
-		(if (org-babel-get-src-block-info)
-		    (org-babel-remove-result)
-		  ;; (superman-ess-eval-and-go)
-		  (message "Cursor is not in src-block"))))) t]))
+       (cond ((string= superman-babel-target "all-blocks")
+	      (org-babel-clear-all-results))
+	     ((string= superman-babel-target "this-block")
+	      (if (ignore-errors (org-babel-get-src-block-info))
+		  (org-babel-remove-result)
+		;; (superman-ess-eval-and-go)
+		(message "Cursor is not in src-block"))))) t]))
 
   ;;}}}
 ;;{{{ superman latex header line buttons
