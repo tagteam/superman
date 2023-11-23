@@ -233,6 +233,11 @@ and an action a one-optional-argument function which must return a buffer.")
 (defvar superman-public-directory "~/public_html/")
 (defvar superman-public-server "" "Place on the web where pages are published.")
 (defvar superman-export-base-extension "html\\|png\\|jpg\\|org\\|pdf\\|R")
+(defvar superman-create-project-directory t
+  "In the process of creating a new project, this variable decides about
+what to do when the directory does not exist.
+If 'ask' prompt user. If nil don't create directory. If anything else
+   create directory")
 ;; (setq org-agenda-show-inherited-tags (list))
 
 ;;}}}
@@ -618,10 +623,14 @@ and others."
 		    "\n:END:\n")
 	    (save-buffer)))
 	;; (append-to-file superman-default-content nil index)
-	(unless (or (not dir) (file-exists-p dir) (not (and ask (y-or-n-p (concat "Create directory (and default sub-directories) " dir "? ")))))
+	(unless (or (not dir) (file-exists-p dir))
+	  (if (or ask (string= superman-create-project-directory "ask"))
+	      (y-or-n-p (concat
+			 "Create directory (and default sub-directories) " dir "? "))
+	    t)
 	  (make-directory dir)
 	  (cl-loop for subdir in superman-project-subdirectories
-		do (unless (file-exists-p subdir) (make-directory (concat dir subdir) t))))
+		   do (unless (file-exists-p subdir) (make-directory (concat dir subdir) t))))
 	(find-file superman-profile)
 	(unless (superman-manager-mode 1))
 	(goto-char (point-min))
@@ -732,6 +741,7 @@ project directory tree to the trash."
 
 (defvar superman-ignore-index-buffers t "If non-nil add index buffers to `ido-ignore-buffers'.")
 (defvar superman-has-ignored-index-buffers nil "User should not set this variable. Function `superman-index-list' sets this variable to avoid
+
  checking index buffers multiple times into `ido-ignore-buffers'.")
 
 (defun superman-index-list (&optional category state extension not-exist-ok update exclude-regexp)
