@@ -1,6 +1,6 @@
 ;;; superman-export.el --- Buttonized org to latex export
 
-;; Copyright (C) 2014-2020  Thomas Alexander Gerds
+;; Copyright (C) 2014-2024  Thomas Alexander Gerds
 
 ;; Author: Thomas Alexander Gerds <tag@biostat.ku.dk>
 ;; Keywords: convenience
@@ -183,7 +183,7 @@ This function works outside R src blocks. Inside R src block
   "Find and apply target specific export function. Targets are defined 
 in `superman-org-export-target-list' and for target TARGET the export function 
 is either called superman-export-as-TARGET or org-export-to-TARGET."
-  (let* ((target superman-org-export-target)
+  (let* ((target (or target superman-org-export-target))
 	 (super-candidate (intern (concat "superman-export-as-" target)))
 	 (org-candidate (intern (concat "org-" target "-export-to-" target))))
     (cond ((functionp super-candidate)
