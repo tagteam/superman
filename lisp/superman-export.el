@@ -157,7 +157,7 @@ This function works outside R src blocks. Inside R src block
   "Babel R-block targets.")
 (defvar superman-babel-target "all-blocks" "Either 'all-blocks': action on all R-blocks\n or 'this-block': action on current R-block.")
 
-(defun superman-org-export-change-target ()
+(defun superman-export-change-target ()
   (interactive)
   (message (cadr superman-org-export-target-list))
   (setq
@@ -167,16 +167,35 @@ This function works outside R src blocks. Inside R src block
    (append (cdr superman-org-export-target-list)
 	   (list (car superman-org-export-target-list)))))
 
+(fset 'superman-org-export-change-target 'superman-export-change-target)
+(defvar superman-export-mode-map (make-sparse-keymap)
+  "Keymap used for `superman-export-mode' commands.")
+   
+(define-minor-mode superman-export-mode 
+  "Toggle org projectmanager document superman-export mode.
+With argument ARG turn superman-export-mode on if ARG is positive, otherwise
+turn it off.
+
+Enabling superman-export mode electrifies the superman-export buffer for project management."
+  :lighter (concat " " superman-org-export-target "")
+  :group 'org
+  :keymap 'superman-export-mode-map)
+
+(defun superman-export-on ()
+  (interactive)
+  (when superman-export-hl-line (hl-line-mode 1))
+  (superman-export-mode t))
+
 
 (defun superman-babel-change-target ()
   (interactive)
+  (message (cadr superman-babel-target-list))
   (setq
    superman-babel-target
    (cadr superman-babel-target-list)
    superman-babel-target-list
    (append (cdr superman-babel-target-list)
-	   (list (car superman-babel-target-list))))
-  )
+	   (list (car superman-babel-target-list)))))
 
 
 (defun superman-org-export-as (&optional target arg)
