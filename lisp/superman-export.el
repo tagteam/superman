@@ -145,9 +145,6 @@ This function works outside R src blocks. Inside R src block
 	 (concat (buffer-name org-buf) " | " tex-file))))))
 (fset 'superman-export-as-pdf 'superman-export-as-latex)
 
-;;{{{ superman org headline buttons
-
-
 (defvar superman-org-export-target-list '("pdf" "html" "docx")
   "Export targets.")
 
@@ -177,7 +174,7 @@ With argument ARG turn superman-export-mode on if ARG is positive, otherwise
 turn it off.
 
 Enabling superman-export mode electrifies the superman-export buffer for project management."
-  :lighter (concat " " superman-org-export-target "")
+  :lighter (:eval (concat " " superman-org-export-target))
   :group 'org
   :keymap 'superman-export-mode-map)
 
@@ -270,26 +267,7 @@ is either called superman-export-as-TARGET or org-export-to-TARGET."
 		;; (superman-ess-eval-and-go)
 		(message "Cursor is not in src-block"))))) t]))
 
-  ;;}}}
-;;{{{ superman latex header line buttons
-
-(defvar superman-export-header-map (make-sparse-keymap)
-  "Keymap for `superman-export-header-mode', a minor mode.
-Use this map to set additional keybindings for when superman-export-header-mode is used.")
-
-
-;; (defvar superman-export-header-mode-hook nil
-;; "Hook for the minor `superman-export-header-mode'.")
-
-
-
-
-;; (add-hook 'LaTeX-mode-hook #'(lambda ()
-			       ;; (when (buffer-file-name)
-				 ;; (superman-export-header-mode))))
-
 ;;}}}
-
 
 (defun superman-ess-eval-and-go (arg)
   (interactive)
