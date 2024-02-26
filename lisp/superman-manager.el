@@ -944,23 +944,12 @@ If NOSELECT is set return the project."
   (let ((superman-candidate (intern (concat "superman-browse-org-export-target-" superman-org-export-target))))
     (cond ((and (not arg) (functionp superman-candidate))
 	   (funcall superman-candidate))
-	  ((or (string= superman-org-export-target "html")
-	       (string= superman-org-export-target "exercise")
+	  ((or (string= superman-org-export-target "exercise")
 	       (string= superman-org-export-target "opgave"))
-	   (let* ((bf (buffer-file-name (current-buffer)))
-		  (server-home (if (and arg (not superman-public-server-home))
-				   (read-string "Specify address on server: " "http://")
-				 superman-public-server-home))
-		  (html-file (if arg
-				 (concat (replace-regexp-in-string
-					  (expand-file-name superman-public-directory)
-					  server-home
-					  (file-name-sans-extension bf))
-					 ".html")
-			       (concat "file:///" (file-name-sans-extension bf) ".html"))))
-	     ;; fixme superman-browse-file-hook (e.g. to synchronize with public server)
-	     (message html-file)
-	     (browse-url html-file)))
+	   (let ((bf (buffer-file-name (current-buffer)))
+		 (pdf-file (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
+	     (message pdf-file)
+	     (org-open-file pdf-file)))
 	  (t 
 	   (let ((target (concat (file-name-sans-extension (buffer-file-name)) "." superman-org-export-target)))
 	     (if (file-exists-p target)

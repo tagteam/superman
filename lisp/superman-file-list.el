@@ -1322,7 +1322,7 @@ Switches to the corresponding directory of each file."
   (superman-file-list-refresh-display file-list-current-file-list))
 
 
-(defun file-list-move (&optional ask file-list target copy)
+(defun file-list-move (&optional ask file-list target copy ok-if-already-exists)
   (interactive "P")
   (let* ((file-list-intern (or file-list file-list-current-file-list))
 	 (nfiles (length file-list-intern))
@@ -1360,7 +1360,7 @@ Switches to the corresponding directory of each file."
 			  (message (concat "Could not move" oldname " to " newname ". File exists"))
 			  nil))))
 	    (if (condition-case nil
-		    (rename-file oldname newname nil)
+		    (rename-file oldname newname ok-if-already-exists)
 		  (error
 		   (progn
 		     (message (concat "Could not move" oldname " to " newname))
@@ -1374,6 +1374,10 @@ Switches to the corresponding directory of each file."
 	      (setcar (cdr entry) target))))))
     (superman-file-list-refresh-display file-list-current-file-list)))
 
+(defun file-list-Move (&optional ask file-list target copy)
+  "Same as file-list-move but force overwrite existing functions"
+  (interactive "P")
+  (file-list-move nil file-list target copy 'yes))
 
 (defun file-list-move-file-at-point (&optional ask)
   (interactive "P")
