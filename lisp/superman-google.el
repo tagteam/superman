@@ -143,13 +143,13 @@
 	     (g-string (save-excursion
 			 ;; should be g-title but g-string is sjover
 			 (re-search-forward "^Summary:[ \t]+\\(.*\\)$" nil t)
-			 (match-string-no-properties 1)))
+			 (replace-in-string (match-string-no-properties 1) "'" "")))
 	     (g-entry (save-excursion
 			(re-search-forward "^Time:[ \t]+\\(.*\\)$" nil t)
-			(match-string-no-properties 1)))
+			 (replace-in-string (match-string-no-properties 1) "'" "")))
 	     (g-place  (save-excursion
 			 (re-search-forward "^Location:[ \t]+\\(.*\\)$" nil t)
-			 (match-string-no-properties 1)))
+			 (replace-in-string (match-string-no-properties 1) "'" "")))
 	     (g-date
 	      ;; Strip this type of string "<2015-03-24 Tue 13:00--14:20>"
 	      (if (string-match "\\( +\\)\\([0-9]\\{1,2\\}:[0-9]\\{2\\}\\)\\(-+\\)\\([0-9]\\{1,2\\}:[0-9]\\{2\\}\\)" g-entry)
