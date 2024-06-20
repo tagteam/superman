@@ -1,6 +1,6 @@
 ;;; superman.el --- org project manager
 
-;; Copyright (C) 2013-2016 Thomas Alexander Gerds
+;; Copyright (C) 2013-2024 Thomas Alexander Gerds
 
 ;; Authors:
 ;; Thomas Alexander Gerds <tag@biostat.ku.dk>
@@ -435,10 +435,11 @@ all dates."
 
 
 (defalias 'S-todo 'superman-todo)
-(defun superman-todo (&optional project read-index-files)
+(defun superman-todo (&optional across)
   "Show todo list for PROJECT."
   (interactive)
-  (let* ((org-agenda-buffer-name (concat "*S-TODO*"))
+  (if across
+      (let* ((org-agenda-buffer-name (concat "*S-TODO*"))
 	 (org-agenda-sticky nil)
 	 (org-agenda-custom-commands
 	  `(("P" "Projects-TODO"
@@ -452,7 +453,8 @@ all dates."
 	      (pretty superman-pretty-agenda)
 	      (org-agenda-finalize-hook 'superman-pretty-todolist))))))
     (push ?P unread-command-events)
-    (call-interactively 'org-agenda)))
+    (call-interactively 'org-agenda))
+    (find-file (concat superman-home "superman-todo-list.org")))
 
 (defun superman-pretty-todolist ()
   (superman-format-agenda
