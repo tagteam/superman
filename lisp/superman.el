@@ -454,7 +454,7 @@ all dates."
 	      (org-agenda-finalize-hook 'superman-pretty-todolist))))))
     (push ?P unread-command-events)
     (call-interactively 'org-agenda))
-    (find-file (concat superman-home "superman-todo-list.org")))
+    (find-file (concat superman-home "superman-todo-list.org"))))
 
 (defun superman-pretty-todolist ()
   (superman-format-agenda
