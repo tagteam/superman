@@ -116,13 +116,6 @@ before the column names.")
 (defvar superman-default-category "Krypton" 
   "Default category for new projects and uncategorized projects.")
 
-(defvar superman-ual
-  (expand-file-name
-   (concat
-    (file-name-directory (locate-library "superman"))
-    "../Kal-El/supermanual/" "Supermanual.org"))
-  "File with instructions for using superman.")
-
 (defvar superman-help-fun 'superman-popup-tip 
   "Function used to display help. Possible values 'tooltip-show or 'popup-tip (depends on popup.el)") 
 
@@ -130,12 +123,6 @@ before the column names.")
   (save-excursion
     (goto-char (point-min))
     (tooltip-show msg)))
-
-(defvar superman-gitworkflow
-  (expand-file-name
-   (concat (file-name-directory
-	    (locate-library "superman")) "../Kal-El/supermanual/" "git-workflow.png")
-   "File with instructions for using superman."))
 
 (defun superman-gitworkflow ()
   (interactive)

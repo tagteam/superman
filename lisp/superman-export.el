@@ -57,7 +57,7 @@ with `superman-org-export-as'."
     ;; (when arg (erase-buffer) (inferior-ess-send-input)))
     (cond ((save-excursion
 	     (goto-char (point-min))
-	     (when (re-search-forward "^\\#\\+superman-export-target:[ \t]*" nil t)
+	     (when (re-search-forward "^\\#\\+superman-org-export-target:[ \t]*" nil t)
 	       (let ((this (buffer-substring-no-properties
 			    (point)
 			    (progn (skip-chars-forward "[a-zA-z/]")
