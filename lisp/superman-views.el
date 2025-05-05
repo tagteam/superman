@@ -1769,11 +1769,11 @@ to refresh the view.
 	(switch-to-buffer vbuf))
       (goto-char (point-min))
       ;; facings
-      (save-excursion
-	(while (org-activate-links (point-max))
-	  (add-text-properties
-	   (match-beginning 0) (match-end 0)
-	   '(face org-link))))
+      ;; (save-excursion
+	;; (while (org-activate-links (point-max))
+	  ;; (add-text-properties
+	   ;; (match-beginning 0) (match-end 0)
+	   ;; '(face org-link))))
       ;; default-dir
       (setq default-directory
 	    (superman-project-home pro))
