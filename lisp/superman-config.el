@@ -376,7 +376,7 @@ given in superman notation."
   "Display a project specific todo-list."
   (interactive)
   (let* ((project (superman-get-project project)))
-    (find-file (concat (file-name-directory (cdr (assoc "index" (cadr project))) "/" (car project) "TODO.org")))))
+    (find-file (concat (file-name-directory (cdr (assoc "index" (cadr project)))) "/" (car project) "TODO.org"))))
       
 
 ;;}}}
