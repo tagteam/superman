@@ -373,53 +373,10 @@ given in superman notation."
 	("CaptureDate" ("fun" superman-trim-date) ("width" 12) ("face" font-lock-string-face))))
 
 (defun superman-project-todo (&optional project)
-  "Display a project specific todo-list based on all org files."
+  "Display a project specific todo-list."
   (interactive)
-  (let* ((project (superman-get-project project))
-	 (nick (car project))
-	 (title  (concat nick ": Todo-list"))
-	 (loc (superman-project-home project))
-	 (index (superman-get-index project)))
-    (put-text-property 0 (length title) 'git-dir (superman-git-toplevel loc) title)
-    (put-text-property 0 (length title) 'dir loc title)
-    (put-text-property 0 (length title) 'nickname nick title)
-    (put-text-property 0 (length title) 'index index title)
-    (if (file-exists-p loc)
-	(let* ((org-agenda-buffer-name  (concat "*Todo[" (car project) "]*"))
-	       (org-agenda-sticky nil)
-	       (org-agenda-redo-command 'superman-project-todo)
-	       (org-agenda-custom-commands
-		(when (file-exists-p loc)
-		  `(("T" "Projects-TODO"
-		     ((todo ""
-			    ((org-agenda-files 
-			      (mapcar 'file-list-make-file-name
-				      (file-list-select
-				       nil
-				       (or "^[^\\.#].*org$" ".") nil nil
-				       loc
-				       nil t))))))
-		     ((org-agenda-window-setup 'current-window)
-		      (org-agenda-finalize-hook
-		       (lambda ()
-			 (superman-format-agenda
-			  superman-project-todolist-balls
-			  '(superman-project-todo)
-			  title
-			  (concat "  " (superman-make-button "Project view" '(:fun superman-view-back :face superman-next-project-button-face  :help "Back to project view."))
-				  "  " (superman-make-button "Git" '(:fun superman-git-display :face superman-next-project-button-face :help "Control project's git repository."))
-				  "  " (superman-make-button "File-list" '(:fun superman-view-file-list :face superman-next-project-button-face :help "View project's file-list."))
-				  ;; "  " (superman-make-button "Todo" '(:fun superman-project-todo :face superman-next-project-button-face :help "View project's todo list."))
-				  "  " (superman-make-button "Time-line" '(:fun superman-project-timeline :face superman-next-project-button-face :help "View project's timeline.")))
-			  nil 'pretty)))))))))
-	  ;; to be 100% sure that the agenda is not accidentally written
-	  ;; to the index file
-	  (switch-to-buffer (get-buffer-create org-agenda-buffer-name))
-	  (push ?T unread-command-events)
-	  (call-interactively 'org-agenda))
-      (switch-to-buffer (get-buffer-create (concat "*Todo[" (car project) "]*")))
-      (erase-buffer)
-      (insert "Superman Project TODO:\n\n Directory " loc " does not exist or is not readable."))))
+  (let* ((project (superman-get-project project)))
+    (find-file (concat (file-name-directory (cdr (assoc "index" (cadr project))) "/" (car project) "TODO.org")))))
       
 
 ;;}}}
