@@ -103,14 +103,14 @@ Enabling superman-view-bibtex mode electrifies the view buffer for bibtex files.
 (defun superman-bibtex-view-entry ()
   (interactive)
   (let ((marker (superman-get-text-property
-			  (get-text-property (point-at-bol) 'org-hd-marker) 'bib-marker)))
+			  (get-text-property (line-beginning-position) 'org-hd-marker) 'bib-marker)))
     (superman-view-edit-item t marker)))
 
 (defun superman-bibtex-edit-entry ()
   (interactive)
   (let ((marker
 	 (superman-get-text-property
-	  (get-text-property (point-at-bol) 'org-hd-marker) 'bib-marker)))
+	  (get-text-property (line-beginning-position) 'org-hd-marker) 'bib-marker)))
     (superman-view-edit-item nil marker)))
 
 (defun superman-capture-bibtex (&optional project marker ask)
@@ -119,7 +119,7 @@ Enabling superman-view-bibtex mode electrifies the view buffer for bibtex files.
 	 (bib-file (get-text-property (point-min) 'dir))
 	 (bib-marker (or marker
 			 (superman-get-text-property
-			  (get-text-property (point-at-bol) 'org-hd-marker) 'bib-marker)
+			  (get-text-property (line-beginning-position) 'org-hd-marker) 'bib-marker)
 			 (progn
 			   (find-file bib-file)
 			   (goto-char (point-max))
@@ -171,13 +171,13 @@ write the result to buffer INDEX-BUF."
     (while (and (bibtex-skip-to-valid-entry)
 		(> (point) pos))
       (setq bib-marker (point-marker))
-      (setq pos (point-at-eol))
+      (setq pos (line-end-position))
       ;; (ignore-errors
       (setq fields (superman-bibtex-parse-entry))
       (set-buffer index-buf)
       (goto-char (point-max))
       (insert "*** " (cdar fields))
-      (put-text-property (point-at-bol) (point-at-eol) 'bib-marker bib-marker)
+      (put-text-property (line-beginning-position) (line-end-position) 'bib-marker bib-marker)
       (insert "\n" ":PROPERTIES:\n")
       (setq fields (cdr fields))
       (while fields

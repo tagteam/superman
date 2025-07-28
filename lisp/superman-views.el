@@ -521,10 +521,10 @@ Enabling superman-configuration mode enables the configuration keyboard
 
 (define-key superman-configuration-mode-map "n" 
   #'(lambda () (interactive)
-      (ignore-errors (goto-char (next-single-property-change (point-at-eol) 'config)))))
+      (ignore-errors (goto-char (next-single-property-change (line-end-position) 'config)))))
 (define-key superman-configuration-mode-map "p" 
   #'(lambda () (interactive)
-      (ignore-errors (goto-char (previous-single-property-change (point-at-bol) 'config)))
+      (ignore-errors (goto-char (previous-single-property-change (line-beginning-position) 'config)))
       (beginning-of-line)))
 (define-key superman-configuration-mode-map "e" 
   #'(lambda () (interactive) 
@@ -569,16 +569,16 @@ Enabling superman-configuration mode enables the configuration keyboard
 	       '(:fun superman-redo
 		      :face superman-face
 		      :help "Read configuration(s) and update this buffer")))
-      (put-text-property (point-at-bol) (point-at-eol) 'redo-cmd
+      (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd
 			 `(superman-view-show-configurations 'refresh))
-      (put-text-property (point-at-bol) (point-at-eol) 'nickname nick)
+      (put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
       (insert "\n\n")
       (insert "* Edit Configuration setup")
-      (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-2)
-      (put-text-property (point-at-bol) (point-at-eol) 'superman-choice 
+      (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-2)
+      (put-text-property (line-beginning-position) (line-end-position) 'superman-choice 
 			 `(lambda () (interactive) 
 			    (superman-goto-project ,nick "Configuration" nil )))
-      (put-text-property (point-at-bol) (point-at-eol) 'display "★ Configuration" )
+      (put-text-property (line-beginning-position) (line-end-position) 'display "★ Configuration" )
       (insert "\n\nSaved window configurations (press digit to restore the corresponding window configuration):\n\n")
       (while config-list
 	(let* ((config (car config-list))
@@ -591,9 +591,9 @@ Enabling superman-configuration mode enables the configuration keyboard
 		   '(:fun superman-choose-entry
 			  :face superman-capture-button-face
 			  :help "Set window configuration")))
-	  (put-text-property (point-at-bol) (point-at-eol) 'config i)
-	  (put-text-property (point-at-bol) (point-at-eol) 'org-hd-marker marker)
-	  (put-text-property (point-at-bol) (point-at-eol) 
+	  (put-text-property (line-beginning-position) (line-end-position) 'config i)
+	  (put-text-property (line-beginning-position) (line-end-position) 'org-hd-marker marker)
+	  (put-text-property (line-beginning-position) (line-end-position) 
 			     'superman-choice 
 			     `(lambda  () (interactive)
 				(superman-switch-config nil nil ,cmd)))
@@ -674,9 +674,9 @@ Enabling superman-make mode enables the make keyboard to control single files."
 		   '(:fun superman-redo
 			  :face superman-face
 			  :help "Read makefile(s) and update this buffer")))
-	  (put-text-property (point-at-bol) (point-at-eol) 'redo-cmd
+	  (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd
 			     `(superman-view-show-make 'refresh))
-	  (put-text-property (point-at-bol) (point-at-eol) 'nickname nick)
+	  (put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
 	  (insert "\n\n")
 	  (while make-list
 	    (let* ((make (car make-list))
@@ -684,9 +684,9 @@ Enabling superman-make mode enables the make keyboard to control single files."
 		   (i 0)
 		   cmd)
 	      (insert "* " (car make))
-	      (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-2)
-	      (put-text-property (point-at-bol) (point-at-eol) 'superman-choice `(lambda () (interactive) (find-file-other-window ,(car make))))
-	      (put-text-property (point-at-bol) (point-at-eol) 'display (concat "★ " (file-name-nondirectory (car make))))
+	      (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-2)
+	      (put-text-property (line-beginning-position) (line-end-position) 'superman-choice `(lambda () (interactive) (find-file-other-window ,(car make))))
+	      (put-text-property (line-beginning-position) (line-end-position) 'display (concat "★ " (file-name-nondirectory (car make))))
 	      (insert " " (superman-make-button "Edit (e)" `(:fun superman-choose-entry
 								  :face superman-edit-button-face 
 								  :width 10 :help (concat "Edit make file " ,(car make)))))
@@ -701,7 +701,7 @@ Enabling superman-make mode enables the make keyboard to control single files."
 				:face superman-capture-button-face
 				:help "Apply make command as shell-command"
 				)))
-		(put-text-property (point-at-bol) (point-at-eol) 
+		(put-text-property (line-beginning-position) (line-end-position) 
 				   'superman-choice 
 				   `(lambda  () (interactive)
 				      (async-shell-command
@@ -907,10 +907,10 @@ Enabling superman-unison mode enables the unison keyboard to control
 
 (define-key superman-unison-mode-map "n" 
   #'(lambda () (interactive)
-      (ignore-errors (goto-char (next-single-property-change (point-at-eol) 'unison)))))
+      (ignore-errors (goto-char (next-single-property-change (line-end-position) 'unison)))))
 (define-key superman-unison-mode-map "p" 
   #'(lambda () (interactive)
-      (ignore-errors (goto-char (previous-single-property-change (point-at-bol) 'unison)))
+      (ignore-errors (goto-char (previous-single-property-change (line-beginning-position) 'unison)))
       (beginning-of-line)))
 (define-key superman-unison-mode-map "e" 'superman-unison-edit-item)
 (define-key superman-unison-mode-map "f" 'superman-view-file-list)
@@ -975,25 +975,25 @@ Enabling superman-unison mode enables the unison keyboard to control
 	       '(:fun superman-redo
 		      :face superman-face
 		      :help "Read unison(s) and update this buffer")))
-      (put-text-property (point-at-bol) (point-at-eol) 'redo-cmd
+      (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd
 			 `(superman-view-show-unison 'refresh))
-      (put-text-property (point-at-bol) (point-at-eol) 'nickname nick)
+      (put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
       (insert "\n\n")
       (insert "* Edit Unison setup")
-      (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-2)
-      (put-text-property (point-at-bol) (point-at-eol) 'superman-choice 
+      (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-2)
+      (put-text-property (line-beginning-position) (line-end-position) 'superman-choice 
 			 `(lambda () (interactive) 
 			    (superman-goto-project ,nick "Configuration" nil )))
-      (put-text-property (point-at-bol) (point-at-eol) 'display "★ Unison" )
+      (put-text-property (line-beginning-position) (line-end-position) 'display "★ Unison" )
       (insert "\tPress digit to run corresponding command. Press 0 to create new. 
                Syntax for remote root ssh://user@machine//home/user/ \n")
       (insert "\n\n" (number-to-string i) ": "
 	      (superman-make-button "Capture directories for synchronisation"
 				    '(:fun superman-capture-unison :face superman-capture-button-face
 					   :help "Set directories for unison synchronisation.")))
-      (put-text-property (point-at-bol) (point-at-eol) 'unison i)
-      ;; (put-text-property (point-at-bol) (point-at-eol) 'org-hd-marker marker)
-      (put-text-property (point-at-bol) (point-at-eol) 
+      (put-text-property (line-beginning-position) (line-end-position) 'unison i)
+      ;; (put-text-property (line-beginning-position) (line-end-position) 'org-hd-marker marker)
+      (put-text-property (line-beginning-position) (line-end-position) 
 			 'superman-choice 'superman-capture-unison)
       (define-key superman-unison-mode-map
 	(number-to-string i)
@@ -1033,9 +1033,9 @@ Enabling superman-unison mode enables the unison keyboard to control
 		   '(:fun superman-choose-entry
 			  :face superman-capture-button-face
 			  :help "Set window unison")))
-	  (put-text-property (point-at-bol) (point-at-eol) 'unison i)
-	  (put-text-property (point-at-bol) (point-at-eol) 'org-hd-marker marker)
-	  (put-text-property (point-at-bol) (point-at-eol) 
+	  (put-text-property (line-beginning-position) (line-end-position) 'unison i)
+	  (put-text-property (line-beginning-position) (line-end-position) 'org-hd-marker marker)
+	  (put-text-property (line-beginning-position) (line-end-position) 
 			     'superman-choice 
 			     `(lambda  () (interactive)
 				;; prevents from synchronizing
@@ -1146,7 +1146,7 @@ Example:
 If ON is non-nil keep mark for already marked items.
 If DONT-MOVE is non-nil stay at item."
   (interactive)
-  (when (get-text-property (point-at-bol) 'superman-item-marker)
+  (when (get-text-property (line-beginning-position) 'superman-item-marker)
     (if (org-agenda-bulk-marked-p)
 	(unless on (org-agenda-bulk-unmark))
       (org-agenda-bulk-mark))))
@@ -1193,7 +1193,7 @@ If MARKED is non-nil run only on marked items."
       (save-excursion
 	(goto-char (point-min))
 	(while (setq next (next-single-property-change
-			   (point-at-eol) 'superman-item-marker))
+			   (line-end-position) 'superman-item-marker))
 	  (goto-char next)
 	  (when (or (not marked)
 		    (superman-marked-p))
@@ -1219,8 +1219,8 @@ If MARKED is non-nil run only on marked items."
       (save-excursion
 	(goto-char (point-min))
 	(while (next-single-property-change
-		(point-at-eol) 'superman-item-marker)
-	  (goto-char (next-single-property-change (point-at-eol) 'superman-item-marker))
+		(line-end-position) 'superman-item-marker)
+	  (goto-char (next-single-property-change (line-end-position) 'superman-item-marker))
 	  ;; (when (or (not marked)
 	  ;; (eq (get-text-property (point) (car marked)) (cadr marked)))
 	  (setq count (+ 1 count)))
@@ -1340,10 +1340,10 @@ and :BODY stores the body (if WITH-BODY is non-nil)
 	  (let* ((beg (if pblock
 			  (save-excursion
 			    (goto-char (cdr pblock))
-			    (point-at-eol))
+			    (line-end-position))
 			(save-excursion
 			  (org-back-to-heading)
-			  (point-at-eol))))
+			  (line-end-position))))
 		 (end (progn (outline-next-heading) (point)))
 		 (body (buffer-substring beg end)))
 	    (setq body (replace-regexp-in-string "^[\n \t]+" "" body))
@@ -1367,7 +1367,7 @@ and :BODY stores the body (if WITH-BODY is non-nil)
 	  (goto-char beg)
 	  (when (re-search-forward "PROPERTIES" end 't)
 	    (while (re-search-forward "^[\t ]+:Ball[0-9]+:" end 't)
-	      (delete-region (point-at-bol) (1+ (point-at-eol))))
+	      (delete-region (line-beginning-position) (1+ (line-end-position))))
 	    balls))))))
 
 
@@ -1467,7 +1467,7 @@ in a special way by `superman-play-ball'")
 (defun superman-ball-dimensions ()
   "Return column start, width and nth at (point)."
   (let* ((cols (cdr (get-text-property
-		     (point-at-bol) 'columns)))
+		     (line-beginning-position) 'columns)))
 	 (start 0)
 	 width
 	 (n 0)
@@ -1490,7 +1490,7 @@ in a special way by `superman-play-ball'")
   (interactive "P")
   (let* ((buffer-read-only nil)
 	 (cc (current-column))
-	 (pp (point-at-bol))
+	 (pp (line-beginning-position))
 	 (sort-fold-case t) 
 	 (dim (superman-ball-dimensions))
 	 ;; the first x characters of each column are blank, 
@@ -1506,7 +1506,7 @@ in a special way by `superman-play-ball'")
 	 next
 	 beg
 	 end)
-    (when (get-text-property (point-at-bol) 'column-names)
+    (when (get-text-property (line-beginning-position) 'column-names)
       (put-text-property
        (previous-single-property-change (point) 'button)
        (next-single-property-change (point) 'button)
@@ -1514,28 +1514,28 @@ in a special way by `superman-play-ball'")
     (when (and pos dim)
       (goto-char pos)
       (goto-char (next-single-property-change
-		  (point-at-eol)
+		  (line-end-position)
 		  'superman-item-marker))
       (setq beg (point))
       ;; test if column has fixed width
       (unless (eq col-width
 		  (1- (nth (1+ current-col)
-			   (get-text-property (point-at-bol) 'columns))))
+			   (get-text-property (line-beginning-position) 'columns))))
 	(setq irregular t)
 	(setq col-width
 	      (1- (nth (1+ current-col)
-		       (get-text-property (point-at-bol) 'columns))))
-	(while (setq next (next-single-property-change (point-at-eol) 'superman-item-marker))
+		       (get-text-property (line-beginning-position) 'columns))))
+	(while (setq next (next-single-property-change (line-end-position) 'superman-item-marker))
 	  (goto-char next)
 	  (setq col-width
 		(max col-width
 		     (nth (1+ current-col)
-			  (get-text-property (point-at-bol) 'columns))))))
+			  (get-text-property (line-beginning-position) 'columns))))))
       ;; move to end of section
       (or (outline-next-heading)
 	  (goto-char (point-max)))
       (goto-char (previous-single-property-change
-		  (point-at-eol) 'superman-item-marker))
+		  (line-end-position) 'superman-item-marker))
       (end-of-line)
       (setq end (point))
       (narrow-to-region beg end)
@@ -1572,7 +1572,7 @@ in a special way by `superman-play-ball'")
 		       `(lambda () (forward-char ,col-start))
 		       `(lambda ()
 			  (let ((here (point))
-				(there (point-at-eol)))
+				(there (line-end-position)))
 			    (forward-char (min (- there here)
 					       ,col-width)))))
 	  (sort-subr reverse 'forward-line 'end-of-line
@@ -1722,18 +1722,18 @@ to refresh the view.
 		   `(:fun superman-redo
 			  :face superman-face
 			  :help ,button-text))))
-	;; (put-text-property (point-at-bol) (point-at-eol) 'face 'superman-project-button-face)
-	(put-text-property (point-at-bol) (point-at-eol) 'redo-cmd
+	;; (put-text-property (line-beginning-position) (line-end-position) 'face 'superman-project-button-face)
+	(put-text-property (line-beginning-position) (line-end-position) 'redo-cmd
 			   (or redo
 			       `(superman-view-project ,nick t)))
 	(let* ((git-subs (superman-list-git-subdirs loc))
 	      (git-dir (or (superman-git-toplevel loc) (car git-subs))))
-	  (put-text-property (point-at-bol) (point-at-eol) 'git-dir git-dir)
-	  (put-text-property (point-at-bol) (point-at-eol) 'git-subs git-subs))
-	(put-text-property (point-at-bol) (point-at-eol) 'dir loc)
-	(put-text-property (point-at-bol) (point-at-eol) 'project-view t) ;; to identify project-view buffer, do not copy to other views
-	(put-text-property (point-at-bol) (point-at-eol) 'nickname nick)
-	(put-text-property (point-at-bol) (point-at-eol) 'index index)
+	  (put-text-property (line-beginning-position) (line-end-position) 'git-dir git-dir)
+	  (put-text-property (line-beginning-position) (line-end-position) 'git-subs git-subs))
+	(put-text-property (line-beginning-position) (line-end-position) 'dir loc)
+	(put-text-property (line-beginning-position) (line-end-position) 'project-view t) ;; to identify project-view buffer, do not copy to other views
+	(put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
+	(put-text-property (line-beginning-position) (line-end-position) 'index index)
 	(insert " ")
 	;; first superman-sticky-displays then unison (if any) and config (if any)
 	(unless config-buttons 
@@ -1785,27 +1785,27 @@ to refresh the view.
 Optional argument CAT is an alist providing formatting 
 properties such as balls for the section.
 "
-  (if (not (get-text-property (point-at-bol) 'cat))
+  (if (not (get-text-property (line-beginning-position) 'cat))
       (error "Not at category heading")
-    (let* ((cat-point (point-at-bol))
+    (let* ((cat-point (line-beginning-position))
 	   (marker (get-text-property
-		    (point-at-bol) 'org-hd-marker))
+		    (line-beginning-position) 'org-hd-marker))
 	   (cat (cond (cat)
 		      (marker
 		       ;; (superman-parse-properties
-		       (get-text-property (point-at-bol) 'org-hd-marker))
+		       (get-text-property (line-beginning-position) 'org-hd-marker))
 		      ;; 'p 'h))
-		      ((or (string= (get-text-property (point-at-bol) 'cat) "git") 
-			   (string= (get-text-property (point-at-bol) 'cat) "Cycle (TAB)"))
+		      ((or (string= (get-text-property (line-beginning-position) 'cat) "git") 
+			   (string= (get-text-property (line-beginning-position) 'cat) "Cycle (TAB)"))
 		       `(:HEADING "Cycle (TAB)"
 			 :git-cycle ,superman-git-default-displays
 			 :git-display ,(car superman-git-default-displays)
-			 :POINT-MARKER ,(point-at-bol)))
+			 :POINT-MARKER ,(line-beginning-position)))
 		      (t (error "Don't know how to do this cat"))))
 	   (view-buf (current-buffer))
 	   (index-buf (when marker (marker-buffer marker)))
 	   (buffer-read-only nil))
-      (delete-region (point-at-bol) (point-max))
+      (delete-region (line-beginning-position) (point-max))
       ;; (org-cut-subtree)
       (superman-format-cat 
        cat index-buf
@@ -1900,9 +1900,9 @@ in buffer VIEW-BUF."
 		     view-buffer
 		   (setq countsub (append countsub (list `(0 ,(point))))))
 		 ;; help superman-one-up to find the right place
-		 (when (get-text-property (point-at-bol) 'point-here)
+		 (when (get-text-property (line-beginning-position) 'point-here)
 		   (put-text-property 0 (length line) 'point-here t line)
-		   (put-text-property  (point-at-bol)  (point-at-eol) 'point-here nil))
+		   (put-text-property  (line-beginning-position)  (line-end-position) 'point-here nil))
 		 (with-current-buffer view-buffer (insert line " \n" ))
 		 (end-of-line)))
 	      ;; items
@@ -1910,26 +1910,26 @@ in buffer VIEW-BUF."
 	       (if countsub
 		   (setf (car (car (last countsub))) (+ (car (car (last countsub))) 1)))
 	       (setq count (+ count 1))
-	       (setq line (superman-format-thing (copy-marker (point-at-bol)) balls))
+	       (setq line (superman-format-thing (copy-marker (line-beginning-position)) balls))
 	       ;; help superman-one-up to find the right place
-	       (when (get-text-property (point-at-bol) 'point-here)
+	       (when (get-text-property (line-beginning-position) 'point-here)
 		 (put-text-property 0 (length line) 'point-here t line)
-		 (put-text-property  (point-at-bol)  (point-at-eol) 'point-here nil))
+		 (put-text-property  (line-beginning-position)  (line-end-position) 'point-here nil))
 	       (with-current-buffer view-buffer
 		 (insert line "\n")))
 	      ;; attachments
 	      ((and (eq (org-current-level) attac-level) attac-balls)
-	       (setq line (superman-format-thing (copy-marker (point-at-bol)) attac-balls))
+	       (setq line (superman-format-thing (copy-marker (line-beginning-position)) attac-balls))
 	       (with-current-buffer view-buffer (insert line "\n"))))))
     ;; add counts in sub headings
     (set-buffer view-buffer)
-    (put-text-property (- (point-at-eol) 1) (point-at-eol) 'tail name)
+    (put-text-property (- (line-end-position) 1) (line-end-position) 'tail name)
     (save-excursion 
       (while countsub
 	(let ((tempsub (car countsub)))
 	  (goto-char (nth 1 tempsub))
 	  (put-text-property
-	   (- (point-at-eol) 1) (point-at-eol) 'display
+	   (- (line-end-position) 1) (line-end-position) 'display
 	   (concat " [" (number-to-string (car tempsub)) "]")))
 	(setq countsub (cdr countsub))))
     ;; (widen)
@@ -1989,7 +1989,7 @@ in buffer VIEW-BUF."
 	     index-marker)
 	    (insert "\n")
 	    (when superman-empty-line-after-cat (insert "\n"))
-	    (put-text-property (- (point-at-eol) 1) (point-at-eol) 'head name))
+	    (put-text-property (- (line-end-position) 1) (line-end-position) 'head name))
 	  (setq text-start (point))
 	  (setq text (replace-regexp-in-string "^[\n \t]+" "" text))
 	  (setq text (replace-regexp-in-string "[\n \t]+$" "" text))
@@ -1999,12 +1999,12 @@ in buffer VIEW-BUF."
 	  (setq text-end (point))
 	  (insert "\n")
 	  (forward-line -1)
-	  (put-text-property (- (point-at-eol) 1) (point-at-eol) 'tail name)
+	  (put-text-property (- (line-end-position) 1) (line-end-position) 'tail name)
 	  (while (not (< (point) text-start))
 	    (insert (superman-make-button " " '(:fun superman-view-edit-item
 						     :face superman-free-text-face
 						     :help "Edit text")) " ")
-	    (put-text-property (point-at-bol) (1+ (point-at-bol)) 'free-text index-marker)
+	    (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'free-text index-marker)
 	    (forward-line -1))
 	  )))
     (set-buffer view-buffer)
@@ -2018,11 +2018,11 @@ in buffer VIEW-BUF."
 (defun superman-split-cat (&optional column)
   (interactive)
   (goto-char (next-single-property-change  (superman-cat-point) 'columns))
-  (let* ((col-info (get-text-property (point-at-bol) 'columns))
+  (let* ((col-info (get-text-property (line-beginning-position) 'columns))
 	 (col-start (superman-compute-columns-start col-info))
 	 ;; (balls (get-text-property (superman-cat-point) 'balls))
 	 (i 0)
-	 (colnames (get-text-property (point-at-bol) 'column-names))
+	 (colnames (get-text-property (line-beginning-position) 'column-names))
 	 (col (or column (completing-read "Split column: "
 					  (mapcar* 'cons colnames (make-list (length colnames) `())))))
 	 (cc (- (length colnames) (length (member col colnames))))
@@ -2037,14 +2037,14 @@ in buffer VIEW-BUF."
     (save-restriction
       (narrow-to-region cat-head cat-tail)
       (goto-char (point-min))
-      (while (setq next (next-single-property-change (point-at-eol) 'superman-item-marker))
+      (while (setq next (next-single-property-change (line-end-position) 'superman-item-marker))
 	(goto-char next)
 	(let ((cur-el (buffer-substring-no-properties (+ (point) c-start) (+ (point) c-end c-start))))
 	  (delete-region (+ (point) c-start) (+ (point) c-end c-start))
 	  (unless (string= last-el cur-el)
 	    (insert "** " col ": " cur-el "\n")
 	    (forward-line -1)
-	    (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-2)
+	    (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-2)
 	    (forward-line 1)
 	    (setq last-el cur-el)))))))
     
@@ -2063,11 +2063,11 @@ in buffer VIEW-BUF."
      "\n"))
   (forward-line -1)
   (beginning-of-line)
-  (put-text-property (point-at-bol) (point-at-eol) 'cat name)
-  (put-text-property (point-at-bol) (point-at-eol) 'n-items count)
-  (put-text-property (point-at-bol) (point-at-eol) 'balls balls)
-  (put-text-property (point-at-bol) (point-at-eol) 'org-hd-marker index-marker)
-  (put-text-property (point-at-bol) (point-at-eol) 'display (concat "★ " name))
+  (put-text-property (line-beginning-position) (line-end-position) 'cat name)
+  (put-text-property (line-beginning-position) (line-end-position) 'n-items count)
+  (put-text-property (line-beginning-position) (line-end-position) 'balls balls)
+  (put-text-property (line-beginning-position) (line-end-position) 'org-hd-marker index-marker)
+  (put-text-property (line-beginning-position) (line-end-position) 'display (concat "★ " name))
   (end-of-line)
   (when (> count 0) (insert " [" (number-to-string count) "]")))
 ;; (unless (or (not superman-view-mode) superman-git-mode)
@@ -2196,7 +2196,7 @@ Returns the formatted string with text-properties."
 
 (defun superman-next-cat ()
   (interactive)
-  (goto-char (or (next-single-property-change (point-at-eol)
+  (goto-char (or (next-single-property-change (line-end-position)
 					      'cat)
 		 (point-max))))
 
@@ -2223,7 +2223,7 @@ Returns the formatted string with text-properties."
 (defun superman-previous-cat ()
   "Move point to start of category"
   (interactive)
-  (goto-char (or (superman-cat-point (max 1 (- (point-at-bol) 1))) (point-min))))
+  (goto-char (or (superman-cat-point (max 1 (- (line-beginning-position) 1))) (point-min))))
 
 (defun superman-swap-balls (list pos)
   "Exchange list element at pos with that at pos + 1.
@@ -2259,14 +2259,14 @@ beginning of the list."
     (if cat-point
 	(save-excursion
 	  (goto-char cat-point)
-	  (put-text-property (point-at-bol) (point-at-eol) 'balls new-balls))
+	  (put-text-property (line-beginning-position) (line-end-position) 'balls new-balls))
       (message "Point is not inside a section"))))
 
 (defun superman-compute-columns-start (&optional col-width)
   "Compute column start points from a given list of column widths COL-WIDTH.
 If COL-WIDTH is nil use text-property columns at the beginning of the
 current line."
-  (let* ((cols (get-text-property (point-at-bol) 'columns))
+  (let* ((cols (get-text-property (line-beginning-position) 'columns))
 	 (n (- (length cols) 1))
 	 (cumcols (list 0))
 	 (i 1))
@@ -2278,7 +2278,7 @@ current line."
 (defun superman-next-ball (&optional arg)
   "Move to ARGth next column."
   (interactive "p")
-  (if (get-text-property (point-at-bol) 'columns)
+  (if (get-text-property (line-beginning-position) 'columns)
       (let* ((current (nth 2 (superman-ball-dimensions)))
 	     (colstart (superman-compute-columns-start))
 	     (j (+ current arg)))
@@ -2294,14 +2294,14 @@ current line."
 (defun superman-previous-ball ()
   "Move to previous column."
   (interactive)
-  (if (get-text-property (point-at-bol) 'columns)
+  (if (get-text-property (line-beginning-position) 'columns)
       (superman-next-ball -1)
 	(backward-char 1)))
     
 (defun superman-one-right (&optional left)
   "Move column to the right."
   (interactive "P")
-  (if (get-text-property (point-at-bol) 'column-names)
+  (if (get-text-property (line-beginning-position) 'column-names)
       ;; swap columns
       (let* ((curcol (nth 2 (superman-ball-dimensions)))
 	     (balls (get-text-property (superman-cat-point) 'balls))
@@ -2309,8 +2309,8 @@ current line."
 	     (new-balls
 	      (superman-swap-balls
 	       balls (if left (- curcol 1) curcol)))
-	     (beg (previous-single-property-change (point-at-bol) 'cat))
-	     (end (or (next-single-property-change (point-at-eol) 'cat) (point-max))))
+	     (beg (previous-single-property-change (line-beginning-position) 'cat))
+	     (end (or (next-single-property-change (line-end-position) 'cat) (point-max))))
 	;; (message (concat "Len!: " (number-to-string (length superman-document-balls))))
 	(save-excursion
 	  (superman-change-balls new-balls)
@@ -2329,7 +2329,7 @@ current line."
 
 (defun superman-current-column-name ()
   (let* ((dim (superman-ball-dimensions))
-	 (names (get-text-property (point-at-bol) 'column-names)))
+	 (names (get-text-property (line-beginning-position) 'column-names)))
     (nth (nth 2 dim) names)))
 
 (defun superman-delete-ball (&optional no-confirm)
@@ -2382,7 +2382,7 @@ the body of the project view."
       (progn
 	(goto-char (next-single-property-change (point-min) 'cat))
 	(superman-cycle-git-display))
-    (cond ((not (previous-single-property-change (point-at-eol) 'cat))
+    (cond ((not (previous-single-property-change (line-end-position) 'cat))
 	   (let ((current (get-text-property (point) 'superman-header-marker))
 		 (mark (next-single-property-change (point) 'superman-header-marker)))
 	     (if mark (progn (goto-char mark)
@@ -2398,7 +2398,7 @@ in the body of the project view."
   (cond
    ((eq (point) (point-min))
     (org-shifttab arg))
-   ((not (previous-single-property-change (point-at-eol) 'cat))
+   ((not (previous-single-property-change (line-end-position) 'cat))
     (let ((current (get-text-property (point) 'superman-header-marker))
 	  (mark (previous-single-property-change
 		 (point) 'superman-header-marker)))
@@ -2429,7 +2429,7 @@ in the body of the project view."
 	;; (let ((current-level (nth 0 (org-heading-components))))
 	  ;; (setq found (and (<= current-level upper-bound)
 			   ;; (> current-level lower-bound))))
-	;; (if found (setq found (point-at-bol)))))
+	;; (if found (setq found (line-beginning-position)))))
     ;; (if (and goto found) 
 	;; (goto-char found)
       ;; found)))
@@ -2458,8 +2458,8 @@ movements permant."
 	;; now at heading in index buffer
 	(setq current-level (nth 0 (org-heading-components)))
 	;; set a mark 
-	(put-text-property (point-at-bol) (point-at-eol) 'current-item 1)
-	(put-text-property (point-at-bol) (point-at-eol) 'point-here 1)
+	(put-text-property (line-beginning-position) (line-end-position) 'current-item 1)
+	(put-text-property (line-beginning-position) (line-end-position) 'point-here 1)
 	;; identify new place
 	(while (> n 0)
 	  (setq next-point (funcall f))
@@ -2495,18 +2495,18 @@ movements permant."
 		     (setq n 0)))));; no further heading
 	  (setq first nil))
 	;; set another mark and remove the first
-	(put-text-property (point-at-bol) (point-at-eol) 'next-item 1)
+	(put-text-property (line-beginning-position) (line-end-position) 'next-item 1)
 	(if down
 	    (goto-char (previous-single-property-change (point) 'current-item))
 	  (goto-char (next-single-property-change (point) 'current-item)))
-	(remove-list-of-text-properties (point-at-bol) (point-at-eol) '(current-item))
+	(remove-list-of-text-properties (line-beginning-position) (line-end-position) '(current-item))
 	;; finally cut current heading 
 	(org-cut-subtree)
 	;; and yank it at new place
 	(if down
 	    (goto-char (next-single-property-change (point) 'next-item))
 	  (goto-char (previous-single-property-change (point) 'next-item)))
-	(remove-list-of-text-properties (point-at-bol) (point-at-eol) '(next-item))
+	(remove-list-of-text-properties (line-beginning-position) (line-end-position) '(next-item))
 	(if (not down)
 	    (beginning-of-line)
 	  (if (< next-level current-level)
@@ -2514,10 +2514,10 @@ movements permant."
 		  (org-end-of-meta-data)
 		(org-end-of-meta-data 't))
 	    (org-end-of-subtree t t))
-	  (when (not (eq (point-at-bol) (point))) (insert "\n")))
+	  (when (not (eq (line-beginning-position) (point))) (insert "\n")))
 	(yank)
 	(when (and (not down)
-		   (not (eq (point-at-bol) (point))))
+		   (not (eq (line-beginning-position) (point))))
 	  (insert "\n"))
 	(delete-blank-lines))
       ;; back in view mode
@@ -2566,7 +2566,7 @@ If BACKWARD is non-nil move backward."
       (let ((marker (org-get-at-bol 'org-hd-marker))
 	    (buffer-read-only nil))
 	(when marker
-	  (delete-region (point-at-bol) (1+ (point-at-eol)))
+	  (delete-region (line-beginning-position) (1+ (line-end-position)))
 	  (with-current-buffer
 	      (marker-buffer marker)
 	    (widen)
@@ -2609,13 +2609,13 @@ disable editing."
 	 (nick (get-text-property (point-min) 'nickname))
 	 (marker
 	  (or marker
-	      (get-text-property (point-at-bol) 'org-hd-marker)
-	      (get-text-property (point-at-bol) 'superman-e-marker)))
-	 (catp (get-text-property (point-at-bol) 'cat))
-	 (columnsp (get-text-property (point-at-bol) 'column-names))
+	      (get-text-property (line-beginning-position) 'org-hd-marker)
+	      (get-text-property (line-beginning-position) 'superman-e-marker)))
+	 (catp (get-text-property (line-beginning-position) 'cat))
+	 (columnsp (get-text-property (line-beginning-position) 'column-names))
 	 (scene (current-window-configuration))
 	 (cat-point (superman-cat-point))
-	 (free (get-text-property (point-at-bol) 'free-text))
+	 (free (get-text-property (line-beginning-position) 'free-text))
 	 item)
     (when (and free (not marker))
       (setq marker free))
@@ -2659,18 +2659,18 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 "
   (interactive)
   (cond (;; at category heading
-	 (get-text-property (point-at-bol) 'cat)
+	 (get-text-property (line-beginning-position) 'cat)
 	 (message "cannot (not yet) delete section in this way"))
 	;; at sub-cat heading
-	((get-text-property (point-at-bol) 'subcat)
+	((get-text-property (line-beginning-position) 'subcat)
 	 (message "cannot (not yet) delete sub-section in this way"))
 	;; inside header
-	((not (previous-single-property-change (point-at-bol) 'cat))
-	 (if (or (get-text-property (point-at-bol) 'org-hd-marker)
-		 (get-text-property (point-at-bol) 'superman-e-marker))
+	((not (previous-single-property-change (line-beginning-position) 'cat))
+	 (if (or (get-text-property (line-beginning-position) 'org-hd-marker)
+		 (get-text-property (line-beginning-position) 'superman-e-marker))
 	     (superman-view-edit-item)))
 	;; inside column names
-	((get-text-property (point-at-bol) 'column-names)
+	((get-text-property (line-beginning-position) 'column-names)
 	 (let ((cname (superman-current-column-name)))
 	   (superman-delete-ball)
 	   (if (yes-or-no-p (concat "Delete column " cname " permanently? "))
@@ -2696,7 +2696,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 	   (set-window-configuration scene)
 	   (unless (or regret dont-kill-line)
 	     (let ((buffer-read-only nil))
-	       (delete-region (point-at-bol) (1+ (point-at-eol)))))
+	       (delete-region (line-beginning-position) (1+ (line-end-position)))))
 	   (unless regret
 	     (when marker
 	       (save-excursion
@@ -2817,29 +2817,29 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 	(message "Point is not in category.")
       (superman-loop 'superman-view-redo-line nil start end nil)
       (goto-char (next-single-property-change start 'names))
-      (delete-region (point-at-bol) (1+ (point-at-eol)))
+      (delete-region (line-beginning-position) (1+ (line-end-position)))
       (insert (superman-column-names new-balls) "\n"))))
 
 (defun superman-view-redo-line (&optional marker balls)
   (interactive)
   (let* ((buffer-read-only nil)
-	 (marker (or marker (get-text-property (point-at-bol) 'org-hd-marker)))
+	 (marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker)))
 	 (balls (or balls (get-text-property (superman-cat-point) 'balls)))
-	 (props (text-properties-at (point-at-bol))))
-    (when (and marker (not (get-text-property (point-at-bol) 'cat))
-	       (not (get-text-property (point-at-bol) 'subcat)))
+	 (props (text-properties-at (line-beginning-position))))
+    (when (and marker (not (get-text-property (line-beginning-position) 'cat))
+	       (not (get-text-property (line-beginning-position) 'subcat)))
       (beginning-of-line)
       (let ((newline
 	     (org-with-point-at marker
 	       (superman-format-thing marker balls)))
-	    (beg (previous-single-property-change (point-at-eol) 'org-hd-marker))
+	    (beg (previous-single-property-change (line-end-position) 'org-hd-marker))
 	    (end (or (next-single-property-change (point) 'org-hd-marker)
 		     (next-single-property-change (point) 'tail))))
 	(delete-region beg end)
 	(insert newline)
-	(set-text-properties (point-at-bol) (+ (point-at-bol) 1) props)
+	(set-text-properties (line-beginning-position) (+ (line-beginning-position) 1) props)
 	(beginning-of-line)
-	(while (ignore-errors (org-activate-links (point-at-eol)))
+	(while (ignore-errors (org-activate-links (line-end-position)))
 	  (add-text-properties
 	   (match-beginning 0) (match-end 0)
 	   '(face org-link)))
@@ -2869,7 +2869,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 
 (defun superman-view-toggle-todo ()
   (interactive)
-  (let ((marker (get-text-property (point-at-bol) 'superman-item-marker)))
+  (let ((marker (get-text-property (line-beginning-position) 'superman-item-marker)))
 	;;(marker (org-get-at-bol 'org-hd-marker)))
     (when marker
       (save-excursion
@@ -2881,7 +2881,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 
 (defun superman-view-priority-up ()
   (interactive)
-  (let ((marker (get-text-property (point-at-bol) 'superman-item-marker)))
+  (let ((marker (get-text-property (line-beginning-position) 'superman-item-marker)))
 	;; (marker (org-get-at-bol 'org-hd-marker)))
     (when marker
       (save-excursion
@@ -2892,7 +2892,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 
 (defun superman-view-priority-down ()
   (interactive)
-  (let ((marker (get-text-property (point-at-bol) 'superman-item-marker)))
+  (let ((marker (get-text-property (line-beginning-position) 'superman-item-marker)))
 	;; (marker (org-get-at-bol 'org-hd-marker)))
     (when marker
       (save-excursion
@@ -2905,7 +2905,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
   (interactive)
   ;; (ignore-errors
     ;; (goto-char (next-single-property-change (point) 'superman-item-marker)))
-  ;; (when (eq (point) (point-at-eol))
+  ;; (when (eq (point) (line-end-position))
     ;; (ignore-errors
       ;; (goto-char (next-single-property-change (point) 'superman-item-marker)))))
  (forward-line 1))
@@ -2914,7 +2914,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 (defun superman-choose-entry ()
   "Call function stored in text property 'superman-choice' at beginning of line."
   (interactive)
-  (let ((choice (get-text-property (point-at-bol) 'superman-choice)))
+  (let ((choice (get-text-property (line-beginning-position) 'superman-choice)))
     (when choice
       (cond ((functionp choice) (funcall choice))))))  
 
@@ -2922,7 +2922,7 @@ The value is non-nil unless the user regretted and the entry is not deleted.
   (interactive)
   ;; (ignore-errors
     ;; (goto-char (previous-single-property-change (point) 'superman-item-marker)))
-  ;; (when (eq (point) (point-at-eol))
+  ;; (when (eq (point) (line-end-position))
     ;; (ignore-errors
       ;; (goto-char (previous-single-property-change (point) 'superman-item-marker)))))
    (forward-line -1))
@@ -2964,8 +2964,8 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 		   (superman-redo))
 		  (t (error "Nothing to do here"))))
 	(when (and (not (marker-buffer m))
-		   (setq f (get-text-property (point-at-bol) 'superman-project-file)
-			 pos (get-text-property (point-at-bol) 'superman-project-file-marker)))
+		   (setq f (get-text-property (line-beginning-position) 'superman-project-file)
+			 pos (get-text-property (line-beginning-position) 'superman-project-file-marker)))
 	  (if (file-directory-p f)
 	      (superman-view-directory f)
 	    (find-file f))
@@ -3119,7 +3119,7 @@ If EXTERN is non-nil or if no capture function is found, pop to
       (superman-capture-bibtex (superman-view-current-project t) nil nil)
     (if (and (not extern) superman-view-mode)
 	(let* ((pro (or project (superman-view-current-project t)))
-	       (marker (get-text-property (point-at-bol) 'org-hd-marker))
+	       (marker (get-text-property (line-beginning-position) 'org-hd-marker))
 	       (cat (superman-current-cat))
 	       (fun (if cat (assoc-string cat superman-capture-alist t))))
 	  ;; in a section but name of section not associated

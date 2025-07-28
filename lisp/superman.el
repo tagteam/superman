@@ -109,19 +109,19 @@ the contents of the file `superman-profile'."
 		 `(:fun ,cat-fun
 			:face superman-capture-button-face
 			:help ,(concat "Add project in category " cat-name))))
-	(put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-2)
-	(put-text-property (point-at-bol) (point-at-eol) 'cat 'cat-name)
-	(put-text-property (point-at-bol) (point-at-eol) 'balls superman-balls)
-	(put-text-property (point-at-bol) (point-at-eol) 'display (concat "★ " cat-name))
+	(put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-2)
+	(put-text-property (line-beginning-position) (line-end-position) 'cat 'cat-name)
+	(put-text-property (line-beginning-position) (line-end-position) 'balls superman-balls)
+	(put-text-property (line-beginning-position) (line-end-position) 'display (concat "★ " cat-name))
 	(insert " [" (number-to-string (length tail)) "]")
 	;; loop over projects (tail) in category
 	(insert "\n")
 	(superman-format-loop tail superman-balls)
-	(put-text-property (- (point-at-eol) 1) (point-at-eol) 'tail cat-name)
+	(put-text-property (- (line-end-position) 1) (line-end-position) 'tail cat-name)
 	;; column names
 	(org-back-to-heading)
 	(end-of-line)
-	(let ((first-item (next-single-property-change (point-at-eol) 'superman-item-marker)))
+	(let ((first-item (next-single-property-change (line-end-position) 'superman-item-marker)))
 	  (when first-item
 	    (goto-char first-item)
 	    (forward-line -1)
@@ -129,9 +129,9 @@ the contents of the file `superman-profile'."
 	    (insert "\n")
 	    (insert (superman-column-names superman-balls))
 	    ;; sorting
-	    ;; (goto-char (next-single-property-change (point-at-bol) 'superman-item-marker))
-	    (when (next-single-property-change (point-at-bol) 'sort-key)
-	      (goto-char (+ 2 (next-single-property-change (point-at-bol) 'sort-key)))
+	    ;; (goto-char (next-single-property-change (line-beginning-position) 'superman-item-marker))
+	    (when (next-single-property-change (line-beginning-position) 'sort-key)
+	      (goto-char (+ 2 (next-single-property-change (line-beginning-position) 'sort-key)))
 	      (superman-sort-section))))
 	(goto-char (point-max))
 	(setq cat-alist (cdr cat-alist)))))
@@ -250,10 +250,10 @@ the existing properties."
 	    " SuperMan "
 	    '(:fun superman-redo :face superman-face)))
   ;; (insert "SuperMan(ager)")
-  (put-text-property (point-at-bol) (point-at-eol) 'redo-cmd '(superman))
-  ;; (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-1)
-  (put-text-property (point-at-bol) (point-at-eol) 'index superman-profile)
-  (put-text-property (point-at-bol) (point-at-eol) 'nickname "Kal-El")
+  (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd '(superman))
+  ;; (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-1)
+  (put-text-property (line-beginning-position) (line-end-position) 'index superman-profile)
+  (put-text-property (line-beginning-position) (line-end-position) 'nickname "Kal-El")
   (when (fboundp 'eg)
     (insert " "
 	    (superman-make-button "Home"
@@ -364,8 +364,8 @@ the existing properties."
 	 (org-refile-targets '((org-agenda-files :maxlevel . 2))))
     (while (ignore-errors
 	     (goto-char (next-single-property-change (point) 'org-hd-marker)))
-      (org-with-point-at (get-text-property (point-at-bol) 'org-hd-marker) (org-copy))
-      (goto-char (point-at-eol)))))
+      (org-with-point-at (get-text-property (line-beginning-position) 'org-hd-marker) (org-copy))
+      (goto-char (line-end-position)))))
 	
 
 ;;}}}
@@ -578,7 +578,7 @@ for git and other actions like commit, history search and pretty log-todo."
 
 (defun superman-todo-edit-item ()
   (interactive)
-  (let ((marker (get-text-property (point-at-bol) 'org-hd-marker)))
+  (let ((marker (get-text-property (line-beginning-position) 'org-hd-marker)))
     (if (not marker)
 	(message "Nothing to do here: Missing value of org-hd-marker at beginning of line.")
 	(switch-to-buffer (marker-buffer marker))
@@ -825,14 +825,14 @@ Enabling superman mode electrifies the superman buffer for project management."
       (font-lock-mode -1)
       (font-lock-default-function nil)
       (goto-char (point-min))
-      (delete-region (point-at-bol) (1+ (point-at-eol)))
+      (delete-region (line-beginning-position) (1+ (line-end-position)))
       (insert "\n")
       (goto-char (point-min))
       (insert (or title "* SupermanAgenda"))
-      ;; (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-2)
-      (put-text-property (point-at-bol) (point-at-eol) 'redo-cmd redo)
-      (put-text-property (point-at-bol) (point-at-eol) 'cat t)
-      (put-text-property (point-at-bol) (point-at-eol) 'balls balls)
+      ;; (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-2)
+      (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd redo)
+      (put-text-property (line-beginning-position) (line-end-position) 'cat t)
+      (put-text-property (line-beginning-position) (line-end-position) 'balls balls)
       (if buttons (insert buttons))
       (end-of-line)
       (insert "\n\n") 
@@ -843,7 +843,7 @@ Enabling superman mode electrifies the superman buffer for project management."
 		      "Pretty display (P)" 
 		      '(:fun superman-pretty-agenda
 			     :face 'superman-header-button-face :help "Prettify display using columns")))
-	(put-text-property (point-at-bol) (point-at-eol) 'superman-pretty-button t)
+	(put-text-property (line-beginning-position) (line-end-position) 'superman-pretty-button t)
 	(insert "\n")))))
 
 (defvar superman-pretty-agenda t
@@ -861,7 +861,7 @@ Enabling superman mode electrifies the superman buffer for project management."
       ;; delete button which involved this function
       (when (next-single-property-change (point-min) 'superman-pretty-button)
 	(goto-char (next-single-property-change (point-min) 'superman-pretty-button))
-	(delete-region (point-at-bol) (point-at-eol)))
+	(delete-region (line-beginning-position) (line-end-position)))
       (superman-view-insert-action-buttons
        '(("More columns" :fun superman-todo-show-more-todo-features :help "Show more columns")
 	 ("Less columns" :fun superman-todo-show-less-todo-features :help "Show less columns")
@@ -879,30 +879,30 @@ Enabling superman mode electrifies the superman buffer for project management."
 	       (goto-char (next-single-property-change (point) 'org-hd-marker)))
 	(setq count (+ count 1))
 	(let* ((buffer-read-only nil)
-	       (pom (get-text-property (point-at-bol) 'org-hd-marker))
+	       (pom (get-text-property (line-beginning-position) 'org-hd-marker))
 	       ;; (buffer-live-p (marker-buffer pom))
 	       (line
 		(org-with-point-at pom
 		  (superman-format-thing pom balls))))
-	  (delete-region (point-at-bol) (1+ (point-at-eol)))
+	  (delete-region (line-beginning-position) (1+ (line-end-position)))
 	  (insert line)
 	  (put-text-property
-	   (point-at-bol) (1+ (point-at-bol))
+	   (line-beginning-position) (1+ (line-beginning-position))
 	   'superman-project-file
 	   (org-with-point-at pom (buffer-file-name)))
 	  (put-text-property
-	   (point-at-bol) (1+ (point-at-bol))
+	   (line-beginning-position) (1+ (line-beginning-position))
 	   'superman-project-file-marker
 	   (marker-position pom))
 	  (insert "\n")))
-      (put-text-property (- (point-at-eol) 1) (point-at-eol) 'tail 'todo-end)
+      (put-text-property (- (line-end-position) 1) (line-end-position) 'tail 'todo-end)
       (goto-char (next-single-property-change (point-min) 'face))
       (insert " [" (number-to-string count) "]"))))
 
 (defun superman-visit-project ()
   "Goto the definition of the project in `superman-profile'"
   (interactive)
-  (let* ((pom (get-text-property (point-at-bol) 'superman-item-marker))
+  (let* ((pom (get-text-property (line-beginning-position) 'superman-item-marker))
 	 (home superman-profile)
 	 (ibuf (if pom (marker-buffer pom)
 		 (get-file-buffer home)))

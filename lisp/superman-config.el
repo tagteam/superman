@@ -330,14 +330,14 @@ given in superman notation."
 	  (lambda ()
 	    (save-excursion
 	      (goto-char (point-min))
-	      (delete-region (point-at-bol) (1+ (point-at-eol)))
+	      (delete-region (line-beginning-position) (1+ (line-end-position)))
 	      (insert 
 	       "Project ToDo list")
-	      (put-text-property (point-at-bol) (point-at-eol) 'redo-cmd `(superman-project-timeline ,nick))
-	      (put-text-property (point-at-bol) (point-at-eol) 'git-dir (superman-git-toplevel loc))
-	      (put-text-property (point-at-bol) (point-at-eol) 'dir loc)
-	      (put-text-property (point-at-bol) (point-at-eol) 'nickname nick)
-	      (put-text-property (point-at-bol) (point-at-eol) 'index index)
+	      (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd `(superman-project-timeline ,nick))
+	      (put-text-property (line-beginning-position) (line-end-position) 'git-dir (superman-git-toplevel loc))
+	      (put-text-property (line-beginning-position) (line-end-position) 'dir loc)
+	      (put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
+	      (put-text-property (line-beginning-position) (line-end-position) 'index index)
 	      (insert
 	       "  " (superman-make-button "Project view" '(:fun superman-view-back :face superman-next-project-button-face  :help "Back to project view."))
 	       "  " (superman-make-button "Git" '(:fun superman-git-display :face superman-next-project-button-face :help "Control project's git repository."))
@@ -412,11 +412,11 @@ given in superman notation."
 	    (setq rsync (concat rsync " ; "
 				(replace-regexp-in-string
 				 "[ \t]*$" ""
-				 (buffer-substring-no-properties (point) (point-at-eol)))))
+				 (buffer-substring-no-properties (point) (line-end-position)))))
 	  (setq rsync
 		(replace-regexp-in-string
 		 "[ \t]*$" ""
-		 (buffer-substring-no-properties (point) (point-at-eol)))))))
+		 (buffer-substring-no-properties (point) (line-end-position)))))))
     rsync))
 (defun superman-save-rsync (&optional config project)
   (interactive)

@@ -115,7 +115,7 @@ This function works outside R src blocks. Inside R src block
       (with-current-buffer R-buf
 	(let ((ess-current-process-name R-buf))
 	  (ess-switch-to-end-of-ESS)
-	  (put-text-property (point-at-bol) (1+ (point-at-bol)) 'eval-point t))))
+	  (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'eval-point t))))
     ;; export to latex or beamer
     (if org-beamer-mode
 	(org-beamer-export-to-latex)

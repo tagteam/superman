@@ -476,7 +476,7 @@ given by the filename property of the item at point."
 	  (append-to-file (concat  (replace-regexp-in-string (concat dir "/") "" (expand-file-name filename)) "\n") nil gitignore)
 	  (let ((buffer-read-only nil))
 	    (beginning-of-line)
-	    (delete-region (point-at-bol) (1+ (point-at-eol)))))
+	    (delete-region (line-beginning-position) (1+ (line-end-position)))))
       (find-file gitignore))))
 
 (defun superman-git-delete-file ()
@@ -484,7 +484,7 @@ given by the filename property of the item at point."
   (interactive)
   (when (superman-view-delete-entry 'dont 'dont)
     (let ((buffer-read-only nil))
-      (delete-region (point-at-bol) (1+ (point-at-eol))))))
+      (delete-region (line-beginning-position) (1+ (line-end-position))))))
 
 ;;}}}
 ;;{{{ actions add/commit/delete on all marked files
@@ -565,8 +565,8 @@ see M-x manual-entry RET git-diff RET.")
   (let* ((file (or file (superman-filename-at-point)))
 	 (dir (or dir (superman-git-toplevel file)))
 	 (hash (or hash
-		   (superman-get-property (get-text-property (point-at-bol) 'superman-item-marker) "commit")
-		   ;; (get-text-property (point-at-bol) 'hash)
+		   (superman-get-property (get-text-property (line-beginning-position) 'superman-item-marker) "commit")
+		   ;; (get-text-property (line-beginning-position) 'hash)
 		   ))
 	 (ref (if hash (or ref (concat hash "^")) "HEAD"))
 	 (cmd (concat "cd " (file-name-directory file)
@@ -672,19 +672,19 @@ see M-x manual-entry RET git-diff RET.")
     (let ((version
 	   (or version
 	       (buffer-substring
-		(point-at-bol)
-		(progn (goto-char (point-at-bol))
+		(line-beginning-position)
+		(progn (goto-char (line-beginning-position))
 		       (forward-word)
 		       (point)))))
 	  (buffer-read-only nil))
       (goto-char (point-min))
       (while (re-search-forward version nil t)
-	(put-text-property (point-at-bol) (+ (point-at-bol) (length version))
+	(put-text-property (line-beginning-position) (+ (line-beginning-position) (length version))
 			   'face 'superman-warning-face)
 	(put-text-property
 	 (progn (skip-chars-forward "^\\)")
 		(+ (point) 1))
-	 (point-at-eol)
+	 (line-end-position)
 	 'face 'superman-warning-face)))))
 
 
@@ -710,11 +710,11 @@ see M-x manual-entry RET git-diff RET.")
       (erase-buffer)
       ;; (goto-char (point-min))
       (insert "* Annotation of " (file-name-nondirectory file))
-      ;; (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-1)
-      (put-text-property (point-at-bol) (point-at-eol) 'filename file)
-      (put-text-property (point-at-bol) (point-at-eol) 'index index)
-      (put-text-property (point-at-bol) (point-at-eol) 'nickname nick)
-      (put-text-property (point-at-bol) (point-at-eol) 'git-dir git-dir)
+      ;; (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-1)
+      (put-text-property (line-beginning-position) (line-end-position) 'filename file)
+      (put-text-property (line-beginning-position) (line-end-position) 'index index)
+      (put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
+      (put-text-property (line-beginning-position) (line-end-position) 'git-dir git-dir)
       (insert "  " (superman-make-button "Project view" '(:fun superman-view-back :face superman-next-project-button-face  :help "Back to project view."))
 	      "  " (superman-make-button "Git overview" '(:fun superman-git-display :face superman-next-project-button-face :help "Control project's git repository."))
 	      ;; "  " (superman-make-button "annotate" '(:fun superman-git-annotate :face superman-next-project-button-face :help "Annotate."))
@@ -797,7 +797,7 @@ git command."
 	  (superman-git-mode-on)
 	  (when git-dir
 	    (insert "** Cycle (TAB)")
-	    (put-text-property (point-at-bol) (1+ (point-at-bol)) 'cat 'git))
+	    (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'cat 'git))
 	  (if (not git-dir)
 	      (insert (superman-initialize-git-control-string dir))
 	    (superman-redo-cat)))))))
@@ -833,7 +833,7 @@ git command. NAME is used to make the section heading.
 	(switch-to-buffer view-buf)
 	(goto-char view-point)
 	(insert "** Git")
-	(put-text-property (point-at-bol) (1+ (point-at-bol)) 'cat 'git)
+	(put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'cat 'git)
 	(insert (superman-initialize-git-control-string dir)))
     (let* ((git-dir (get-text-property (point-min) 'git-dir))
 	   (cycles-given (plist-get props :git-cycle))
@@ -872,8 +872,8 @@ git command. NAME is used to make the section heading.
 		   (concat "*Git output[" git-dir "]*")))
       (erase-buffer)
       (insert "git-output")
-      (put-text-property (point-at-bol) (point-at-eol) 'git-dir git-dir)
-      (when file (put-text-property (point-at-bol) (point-at-eol) 'filename file))
+      (put-text-property (line-beginning-position) (line-end-position) 'git-dir git-dir)
+      (when file (put-text-property (line-beginning-position) (line-end-position) 'filename file))
       (insert "\n")
       (org-mode)
       ;; for the first time ...
@@ -894,7 +894,7 @@ git command. NAME is used to make the section heading.
       (goto-char (point-min))
       (while (outline-next-heading)
 	(setq count (+ count 1))
-	(setq line (superman-format-thing (copy-marker (point-at-bol)) balls))
+	(setq line (superman-format-thing (copy-marker (line-beginning-position)) balls))
 	(with-current-buffer view-buf (insert line "\n")))
       (set-buffer view-buf)
       (when superman-empty-line-before-cat (insert "\n"))
@@ -930,7 +930,7 @@ git command. NAME is used to make the section heading.
       (when superman-empty-line-after-cat (insert "\n"))
       (insert (superman-column-names balls))
       (goto-char (1- (or (next-single-property-change (point) 'cat) (point-max))))
-      (put-text-property (- (point-at-eol) 1) (point-at-eol) 'tail name)
+      (put-text-property (- (line-end-position) 1) (line-end-position) 'tail name)
       (goto-char (previous-single-property-change (point) 'cat))
       (beginning-of-line)
       (when (re-search-forward "\[[0-9]*\]" nil t)
@@ -995,7 +995,7 @@ Translate the branch names into buttons."
       :help "Git status" :width 17)
      ;; ("Delete marked" :fun superman-view-delete-marked :face superman-default-button-face :help "Delete marked files" :width 17)
      ))
-  (put-text-property (point-at-bol) (1+ (point-at-bol)) 'git-buttons t))
+  (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'git-buttons t))
 
 (defun superman-view-insert-git-project-buttons (&optional dir)
   :help "Insert the git project buttons."
@@ -1268,7 +1268,7 @@ Translate the branch names into buttons."
 (defun superman-set-git-cycle (value)
   (let ((buffer-read-only nil))
     (put-text-property (point-min) (1+ (point-min)) 'git-display value)))
-;; (org-with-point-at (get-text-property (point-at-bol) 'org-hd-marker)
+;; (org-with-point-at (get-text-property (line-beginning-position) 'org-hd-marker)
 ;; (org-set-property "git-display" value))
 
 (defun superman-cycle-git-display ()
@@ -1294,16 +1294,16 @@ This function should be bound to a key or button."
     ;; delete remote line
     (when remote-start
       (goto-char remote-start)
-      (delete-region (point-at-bol) (1+ (point-at-eol))))
+      (delete-region (line-beginning-position) (1+ (line-end-position))))
     ;; delete branch line
     (goto-char branch-start)
-    (delete-region (point-at-bol) (1+ (point-at-eol)))
+    (delete-region (line-beginning-position) (1+ (line-end-position)))
     (when git-dir
       (superman-view-insert-git-branches git-dir)
       ;; delete control line
       (when control-start
 	(goto-char control-start)
-	(delete-region (point-at-bol) (1+ (point-at-eol)))
+	(delete-region (line-beginning-position) (1+ (line-end-position)))
 	(superman-view-insert-git-project-buttons)
 	(insert "\n")
 	)))
@@ -1354,7 +1354,7 @@ repository of PROJECT which is located at DIR."
 			 (if (string= commit "") "Workspace (now)"
 			   (concat commit
 				   " (" (superman-get-property
-					 (get-text-property (point-at-bol) 'superman-item-marker)
+					 (get-text-property (line-beginning-position) 'superman-item-marker)
 					 "date") ")"))
 			 '(:fun superman-git-diff-switch-commit
 				:face superman-capture-button-face
@@ -1364,7 +1364,7 @@ repository of PROJECT which is located at DIR."
 			      " (" (save-excursion
 				     (forward-line 1)
 				     (or (superman-get-property
-					  (get-text-property (point-at-bol) 'superman-item-marker)
+					  (get-text-property (line-beginning-position) 'superman-item-marker)
 					  "date") "unknown")) ")")
 		      '(:fun superman-git-diff-switch-ref
 			     :face superman-capture-button-face :help "Change reference version.")))
@@ -1397,7 +1397,7 @@ repository of PROJECT which is located at DIR."
       (goto-char (point-min))
       (while (outline-next-heading)
 	(setq count (+ count 1))
-	(setq line (superman-format-thing (copy-marker (point-at-bol)) balls))
+	(setq line (superman-format-thing (copy-marker (line-beginning-position)) balls))
 	(with-current-buffer view-buf (insert line "\n")))
       (set-buffer view-buf)
       (when superman-empty-line-before-cat (insert "\n"))
@@ -1419,7 +1419,7 @@ repository of PROJECT which is located at DIR."
       (when superman-empty-line-after-cat (insert "\n"))
       (insert (superman-column-names balls))
       (goto-char (1- (or (next-single-property-change (point) 'cat) (point-max))))
-      (put-text-property (- (point-at-eol) 1) (point-at-eol) 'tail name)
+      (put-text-property (- (line-end-position) 1) (line-end-position) 'tail name)
       ;; (goto-char (previous-single-property-change (point) 'cat))
       (goto-char (point-min))
       (insert header "\n")
@@ -1441,12 +1441,12 @@ repository of PROJECT which is located at DIR."
       (set-text-properties 0 (length ref) nil ref)
       ;; prepare the list of files which have changed
       (let (next)
-	(while (setq next (next-single-property-change (point-at-eol) 'superman-item-marker))
+	(while (setq next (next-single-property-change (line-end-position) 'superman-item-marker))
 	  (goto-char next)
 	  (let* ((cmd `(lambda () (superman-git-diff-file
 				   ,file ,git-dir
 				   ,commit ,ref ,config (point-marker)))))
-	    (put-text-property (point-at-bol) (1+ (point-at-bol)) 'superman-choice cmd))))
+	    (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'superman-choice cmd))))
       (setq next-item (next-single-property-change (point-min) 'superman-item-marker))
       (when next-item ;; is nil when nothing changed between workspace and HEAD
 	(goto-char next-item)
@@ -1496,7 +1496,7 @@ repository of PROJECT which is located at DIR."
   (let* ((git-dir (get-text-property (point-min) 'git-dir)))
     (goto-char (point-min))
     (while (re-search-forward "^[^ \t\n]+" nil t)
-      (let* ((ff (buffer-substring (point-at-bol) (point-at-eol)))
+      (let* ((ff (buffer-substring (line-beginning-position) (line-end-position)))
 	     (dname (file-name-directory ff))
 	     (fname (file-name-nondirectory ff))
 	     (fullname (concat git-dir "/" ff))
@@ -1512,9 +1512,9 @@ repository of PROJECT which is located at DIR."
 
 (defun superman-git-submodule-pre-display-hook ()
   (while (re-search-forward "^[ -][^ \t]+" nil t)
-    (kill-region (point-at-bol) (1+ (point)))
-    (re-search-forward "[^ \t]+" (point-at-eol) t)
-    (kill-region (point) (point-at-eol))
+    (kill-region (line-beginning-position) (1+ (point)))
+    (re-search-forward "[^ \t]+" (line-end-position) t)
+    (kill-region (point) (line-end-position))
     (end-of-line))
   (superman-git-files-pre-display-hook))
 
@@ -1537,13 +1537,13 @@ repository of PROJECT which is located at DIR."
     (when (looking-at "git-output") (forward-line 1))
     (while (re-search-forward "^[^ \t\n]+" nil t)
       (let* ((match (match-string-no-properties 0))
-	     (ff (buffer-substring (point-at-bol) (point-at-eol)))
+	     (ff (buffer-substring (line-beginning-position) (line-end-position)))
 	     (dname (file-name-directory ff))
 	     (fname (file-name-nondirectory ff))
 	     (fullname (concat git-dir "/" ff))
 	     (status (assoc ff status-list)))
 	(if (member fullname flist)
-	    (delete-region (point-at-bol) (point-at-eol))
+	    (delete-region (line-beginning-position) (line-end-position))
 	  (setq flist (append (list fullname) flist))
 	  (replace-match
 	   (concat "** "
@@ -1612,15 +1612,15 @@ manual-entry RET git-diff RET.")
 	 (nickname (get-text-property (point-min) 'nickname))
 	 next)
     (goto-char cat-point)
-    (while (setq next (next-single-property-change (point-at-eol) 'superman-item-marker))
+    (while (setq next (next-single-property-change (line-end-position) 'superman-item-marker))
       (goto-char next)
-      (let* ((commit (superman-get-property (get-text-property (point-at-bol) 'superman-item-marker) "commit"))
+      (let* ((commit (superman-get-property (get-text-property (line-beginning-position) 'superman-item-marker) "commit"))
 	     (ref (if (string= commit "Workspace") "HEAD" (concat commit "^")))
 	     (cmd
 	      (if file
 		  `(lambda () (superman-git-log-open-commit-at-point ,file ,commit))
 		`(lambda () (superman-git-display-diff ,commit ,ref ,dir ,file ,nickname)))))
-	(put-text-property (point-at-bol) (1+ (point-at-bol)) 'superman-choice cmd)))))
+	(put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'superman-choice cmd)))))
 
 (defvar superman-git-show-ignored nil
   "If non-nil show files that are otherwise ignored by git
@@ -1678,7 +1678,7 @@ and keep only the matching lines. Works only if the column name of the
 	 val
 	 (buffer-read-only nil))
     (goto-char cstart)
-    (while (setq next (next-single-property-change (point-at-eol) 'org-hd-marker))
+    (while (setq next (next-single-property-change (line-end-position) 'org-hd-marker))
       (goto-char next)
       ;; match regexp against value of column
       (if (and (setq
@@ -1690,8 +1690,8 @@ and keep only the matching lines. Works only if the column name of the
 	(beginning-of-line)
 	(setq catch (append catch
 			    (list
-			     (buffer-substring (point) (point-at-eol)))))
-	(delete-region (point-at-bol) (1+ (point-at-eol)))
+			     (buffer-substring (point) (line-end-position)))))
+	(delete-region (line-beginning-position) (1+ (line-end-position)))
 	(forward-line -1)))
     ;; in case we remove the last line
     (unless (next-single-property-change (point-min) 'tail)
@@ -1699,7 +1699,7 @@ and keep only the matching lines. Works only if the column name of the
 	(if end
 	    (put-text-property end (1+ end) 'tail t)
 	  (goto-char (next-single-property-change (point-min) 'column-names))
-	  (put-text-property (point-at-eol) (- (point-at-eol) 1) 'tail t))))
+	  (put-text-property (line-end-position) (- (line-end-position) 1) 'tail t))))
     (if (not catch)
 	(message "No lines are deleted by this filter.")
       (setq superman-git-filter
@@ -1716,7 +1716,7 @@ and keep only the matching lines. Works only if the column name of the
 			'(:fun superman-git-set-filter
 			       :face superman-header-button-face
 			       :help "Set filter")))
-	(put-text-property (point-at-bol) (+ (point-at-bol) 1) 'git-filter t)
+	(put-text-property (line-beginning-position) (+ (line-beginning-position) 1) 'git-filter t)
 	(end-of-line))
       (insert "\t" (superman-make-button
 		    filter-name
@@ -1971,7 +1971,7 @@ the git directory."
 	  (superman-view-mode-on)
 	  (superman-git-mode-on)
 	  (insert "** Git")
-	  (put-text-property (point-at-bol) (1+ (point-at-bol)) 'cat 'git)
+	  (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'cat 'git)
 	  (superman-redo-cat))))))
 
 (defun superman-git-log-1 (&optional file limit search-string decoration-only)
@@ -2000,14 +2000,14 @@ the git directory."
     (erase-buffer)
     (font-lock-mode -1)    
     (insert "* Git Log of " (file-name-nondirectory file))
-    ;; (put-text-property (point-at-bol) (point-at-eol) 'face 'org-level-1)
-    (put-text-property (point-at-bol) (point-at-eol) 'filename file)
-    (put-text-property (point-at-bol) (point-at-eol) 'nickname nick)
-    (put-text-property (point-at-bol) (point-at-eol) 'index index)
-    (put-text-property (point-at-bol) (point-at-eol) 'git-dir dir)
-    (put-text-property (point-at-bol) (point-at-eol) 'limit limit)
-    (put-text-property (point-at-bol) (point-at-eol) 'search-string search-string)
-    (put-text-property (point-at-bol) (point-at-eol) 'decoration-only decoration-only)
+    ;; (put-text-property (line-beginning-position) (line-end-position) 'face 'org-level-1)
+    (put-text-property (line-beginning-position) (line-end-position) 'filename file)
+    (put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
+    (put-text-property (line-beginning-position) (line-end-position) 'index index)
+    (put-text-property (line-beginning-position) (line-end-position) 'git-dir dir)
+    (put-text-property (line-beginning-position) (line-end-position) 'limit limit)
+    (put-text-property (line-beginning-position) (line-end-position) 'search-string search-string)
+    (put-text-property (line-beginning-position) (line-end-position) 'decoration-only decoration-only)
     (insert "  " (superman-make-button "Project view" '(:fun superman-view-back :face superman-next-project-button-face  :help "Back to project view."))
 	    "  " (superman-make-button "Git overview" '(:fun superman-git-display :face superman-next-project-button-face :help "Control project's git repository."))
 	    "  " (superman-make-button "annotate" '(:fun superman-git-annotate :face superman-next-project-button-face :help "Annotate."))
@@ -2048,7 +2048,7 @@ the git directory."
   "Set git tag"
   (interactive)
   ;; tag commit in git log-view
-  (let* ((marker (get-text-property (point-at-bol) 'org-hd-marker))
+  (let* ((marker (get-text-property (line-beginning-position) 'org-hd-marker))
 	 (oldtag (superman-get-property
 		  marker
 		  "tag"))
@@ -2087,14 +2087,14 @@ the git directory."
 (defun superman-git-log-open-commit-at-point (&optional file commit diff)
   "Shows version of the document at point "
   (interactive)
-  ;; (superman-git-revision (get-text-property (point-at-bol) 'hash) diff))
+  ;; (superman-git-revision (get-text-property (line-beginning-position) 'hash) diff))
   ;; (defun superman-git-revision (pom &optional diff)
   ;; "Shows version of the document at point "
   (catch 'work-space
     (let* ((file (or file (get-text-property (point-min) 'filename)
-		     (superman-get-property (get-text-property (point-at-bol) 'superman-item-marker) "filename")))
+		     (superman-get-property (get-text-property (line-beginning-position) 'superman-item-marker) "filename")))
 	   (hash (or commit
-		     (superman-get-property (get-text-property (point-at-bol) 'superman-item-marker) "commit")))
+		     (superman-get-property (get-text-property (line-beginning-position) 'superman-item-marker) "commit")))
 	   (ext (if (string= hash "Workspace")
 		    (throw 'work-space (find-file-other-window file))
 		  (file-name-extension file)))

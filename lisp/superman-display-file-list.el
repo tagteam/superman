@@ -127,7 +127,7 @@ file-list display buffers unless DIR matches the directories associated with
 	    (insert " " dir " ")
 	    (insert "\n\n")
 	    ;; this point indicates the start of the file list
-	    ;; (put-text-property (point-at-bol) (point-at-eol) 'point-file-list-start t)
+	    ;; (put-text-property (line-beginning-position) (line-end-position) 'point-file-list-start t)
 	    )
 	;; end of header (new buffers)
 	;; 
@@ -185,8 +185,8 @@ file-list display buffers unless DIR matches the directories associated with
 				line)))
 		(setq rest (cdr rest))))
 	    ;; each beginning line has the filename saved as text-property
-	    (put-text-property (point-at-bol) (1+ (point-at-bol)) 'filename (file-list-make-file-name el))
-	    (put-text-property (point-at-bol) (1+ (point-at-bol)) 'superman-item-marker t)
+	    (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'filename (file-list-make-file-name el))
+	    (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'superman-item-marker t)
 	    (when appendix
 	      (insert appendix))
 	    (insert "\n"))))
@@ -202,20 +202,20 @@ file-list display buffers unless DIR matches the directories associated with
 	   '(:fun file-list-show-tools
 		  :face superman-capture-button-face
 		  :help "Show file-list tools" :width 13)))
-  (put-text-property (point-at-bol) (point-at-eol) 'tools t))
+  (put-text-property (line-beginning-position) (line-end-position) 'tools t))
 
 (defun file-list-hide-tools ()
   (interactive)
   (let ((buffer-read-only nil))
     (goto-char (next-single-property-change (point-min) 'tools))
-    (delete-region (point-at-bol) (point-at-eol))
+    (delete-region (line-beginning-position) (line-end-position))
     (file-list-tools-button)))
 
 (defun file-list-show-tools ()
   (interactive)
   (let ((buffer-read-only nil))
     (goto-char (next-single-property-change (point-min) 'tools))
-    (delete-region (point-at-bol) (point-at-eol))
+    (delete-region (line-beginning-position) (line-end-position))
     (insert
      (superman-make-button "Tools"  '(:width 13 :fun file-list-hide-tools :face superman-capture-button-face :help "Hide tools"))
      " "
@@ -245,8 +245,8 @@ file-list display buffers unless DIR matches the directories associated with
      ;; " "
      ;; (superman-make-button "$ls -lh" '(:fun file-list-ls :face file-list-action-button-face :help "Remove search results and file attributes from display."))
      )
-    (put-text-property (point-at-bol) (point-at-eol) 'tools t)
-    (goto-char (point-at-bol))))
+    (put-text-property (line-beginning-position) (line-end-position) 'tools t)
+    (goto-char (line-beginning-position))))
 
 
 (defvar file-list-sort-keys-help-string
@@ -266,7 +266,7 @@ file-list display buffers unless DIR matches the directories associated with
       ;; remove existing filter line
       (when f-point
 	(goto-char f-point)
-	(delete-region (point-at-bol) (1+ (point-at-eol))))
+	(delete-region (line-beginning-position) (1+ (line-end-position))))
       (insert 
        (superman-make-button
 	"Filters" 
@@ -300,7 +300,7 @@ file-list display buffers unless DIR matches the directories associated with
 	      (superman-make-button "+" '(:fun file-list-filter
 					       :face file-list-active-filter-button-face
 					       :help "Press button to add a filter")))
-      (put-text-property (point-at-bol) (point-at-eol) 'filter-line t)
+      (put-text-property (line-beginning-position) (line-end-position) 'filter-line t)
       (insert "\n"))))
 
 
@@ -590,7 +590,7 @@ Returns the point at the end of the file-name."
   "Return the absolute file-name at point and error if there is none."
   (let (fname)
     (cond (file-list-mode
-	   (or (setq fname (get-text-property (point-at-bol) 'filename))
+	   (or (setq fname (get-text-property (line-beginning-position) 'filename))
 	       (let ((pos (previous-single-property-change (point)  'filename)))
 		 (when pos
 		   (setq fname (get-text-property (previous-single-property-change pos 'filename) 'filename))))))

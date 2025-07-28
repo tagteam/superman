@@ -248,7 +248,7 @@ See also `superman-capture-whatever' for the other arguments."
       (org-narrow-to-subtree)
       (unless (= level 0) (progn 
 			    (skip-chars-forward "[* ]")
-			    (delete-region (point) (point-at-eol)))))
+			    (delete-region (point) (line-end-position)))))
     ;; stuff point-min with text properties
     (goto-char (point-min))
     (insert "Superman captured: ")
@@ -303,7 +303,7 @@ See also `superman-capture-whatever' for the other arguments."
     (insert "\n -------------------- Editable text to be saved below this line:")
     (insert "\n\n")
     (forward-line -1)    
-    (put-text-property (1+ (point-min)) (point-at-eol) 'read-only t)
+    (put-text-property (1+ (point-min)) (line-end-position) 'read-only t)
     (forward-line 1)
     (end-of-line)
     (insert "\n")
@@ -327,13 +327,13 @@ See also `superman-capture-whatever' for the other arguments."
 						`((,key ,value))))
 		   (ignore-errors
 		     (insert "\n:" key ": ")
-		     (put-text-property (point-at-bol) (1+ (point-at-bol)) 'prop-marker (point-at-bol))
-		     (put-text-property  (point-at-bol) (- (point) 1) 'property key)
-		     (when complete (put-text-property  (point-at-bol) (- (point) 1) 'complete complete))
-		     (when test (put-text-property  (point-at-bol) (- (point) 1) 'test test))
-		     (when hidden (put-text-property  (point-at-bol) (- (point) 1) 'hidden hidden))
-		     (when message (put-text-property  (point-at-bol) (- (point) 1) 'message message))
-		     (when if-empty (put-text-property  (point-at-bol) (- (point) 1) 'if-empty if-empty))
+		     (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'prop-marker (line-beginning-position))
+		     (put-text-property  (line-beginning-position) (- (point) 1) 'property key)
+		     (when complete (put-text-property  (line-beginning-position) (- (point) 1) 'complete complete))
+		     (when test (put-text-property  (line-beginning-position) (- (point) 1) 'test test))
+		     (when hidden (put-text-property  (line-beginning-position) (- (point) 1) 'hidden hidden))
+		     (when message (put-text-property  (line-beginning-position) (- (point) 1) 'message message))
+		     (when if-empty (put-text-property  (line-beginning-position) (- (point) 1) 'if-empty if-empty))
 		     (when value (insert (superman-make-value value))))))
 		((eq key 'fun) (ignore-errors (funcall (cadr el))))
 		((eq key 'hdr)
@@ -341,7 +341,7 @@ See also `superman-capture-whatever' for the other arguments."
 		   (save-excursion
 		     (org-back-to-heading)
 		     (end-of-line)
-		     (when test (put-text-property  (point-at-bol) (- (point) 1) 'test test))		     
+		     (when test (put-text-property  (line-beginning-position) (- (point) 1) 'test test))		     
 		     (insert (superman-make-value value)))))
 		((eq key 'body) (setq body (concat body (superman-make-value value)))))
 	  (setq plist (cdr plist))))
@@ -368,7 +368,7 @@ See also `superman-capture-whatever' for the other arguments."
   "Insert first line of superman capture buffer."
   (goto-char (point-min))
   (when (re-search-forward "Superman captured: " nil t)
-    (when replace (delete-region (point) (point-at-eol)))
+    (when replace (delete-region (point) (line-end-position)))
     (insert "The captured text will be saved in " 
 	    (buffer-name (marker-buffer marker))
 	    " (line " (number-to-string (org-with-point-at marker (count-lines 1 (point))))
@@ -468,38 +468,38 @@ at the requested destination and then reset the window configuration."
       (goto-char (point-min))
       (while (setq next (next-single-property-change (point) 'superman-error))
 	(goto-char next)
-	(delete-region (point-at-bol) (1+ (point-at-eol))))
+	(delete-region (line-beginning-position) (1+ (line-end-position))))
       ;; see if hdr is filled correctly
       (goto-char (point-min))
       (ignore-errors (outline-next-heading))
       (when (org-at-heading-p)
-	(let ((test (or (get-text-property (point-at-bol) 'test)))
-	      (message (or (get-text-property (point-at-bol) 'message) "Error"))
+	(let ((test (or (get-text-property (line-beginning-position) 'test)))
+	      (message (or (get-text-property (line-beginning-position) 'message) "Error"))
 	      test-message)
 	  (when (and test (setq test-message (funcall test)))
 	    (beginning-of-line) (insert "<" (if (stringp test-message) test-message message) ">\n")
 	    (forward-line -1)
-	    (put-text-property (point-at-bol) (point-at-eol) 'superman-error 'yes)
-	    (put-text-property (point-at-bol) (point-at-eol) 'face 'superman-warning-face)
+	    (put-text-property (line-beginning-position) (line-end-position) 'superman-error 'yes)
+	    (put-text-property (line-beginning-position) (line-end-position) 'face 'superman-warning-face)
 	    (forward-line 1)
 	    (setq n-error (1+ n-error)))))
       ;; move through form and test if filled correctly
       (goto-char (point-min))
-      (while (setq next (next-single-property-change (point-at-eol) 'prop-marker))
+      (while (setq next (next-single-property-change (line-end-position) 'prop-marker))
 	(goto-char next)
 	(re-search-forward ":[a-zA-Z0-9]+:" nil t)
 	;; make sure that there is a space between : and the value
 	(unless (looking-at " ") (insert " "))
 	;;
-	(let* ((if-empty (get-text-property (point-at-bol) 'if-empty))
-	       (test (or (get-text-property (point-at-bol) 'test)))
+	(let* ((if-empty (get-text-property (line-beginning-position) 'if-empty))
+	       (test (or (get-text-property (line-beginning-position) 'test)))
 	       test-message
-	       (message (or (get-text-property (point-at-bol) 'message) "Error")))
+	       (message (or (get-text-property (line-beginning-position) 'message) "Error")))
 	  (cond ((and test (setq test-message (funcall test)))
 		 (beginning-of-line) (insert "<" (if (stringp test-message) test-message message) ">\n")
 		 (forward-line -1)
-		 (put-text-property (point-at-bol) (point-at-eol) 'superman-error 'yes)
-		 (put-text-property (point-at-bol) (point-at-eol) 'face 'superman-warning-face)
+		 (put-text-property (line-beginning-position) (line-end-position) 'superman-error 'yes)
+		 (put-text-property (line-beginning-position) (line-end-position) 'face 'superman-warning-face)
 		 (forward-line 1)
 		 (insert "\n")
 		 (re-search-forward ":[a-zA-Z0-9]+:" nil t)
@@ -507,15 +507,15 @@ at the requested destination and then reset the window configuration."
 		;; empty field
 		((looking-at "[ \t]*\n")
 		 (cl-case if-empty 
-		   ('delete (delete-region (point-at-bol) (1+ (point-at-eol))))
+		   ('delete (delete-region (line-beginning-position) (1+ (line-end-position))))
 		   ('complain 
 		    (beginning-of-line) (insert " <" (or message "Cannot be empty") ">\n")
 		    (forward-line -1)
-		    (put-text-property (point-at-bol) (point-at-eol) 'superman-error 'yes)
-		    (put-text-property (point-at-bol) (point-at-eol) 'face 'superman-warning-face)
+		    (put-text-property (line-beginning-position) (line-end-position) 'superman-error 'yes)
+		    (put-text-property (line-beginning-position) (line-end-position) 'face 'superman-warning-face)
 		    (forward-line 1)
 		    (setq n-error (1+ n-error)))
-		   (t (goto-char (point-at-eol))))))))
+		   (t (goto-char (line-end-position))))))))
       (if (> n-error 0)
 	  (progn (message (concat (number-to-string n-error) " fields are not filled correctly."))
 		 (goto-char (next-single-property-change (point-min) 'superman-error))
@@ -540,7 +540,7 @@ at the requested destination and then reset the window configuration."
 		  (org-set-property (caar hidden-props) (cadar hidden-props))
 		  (setq hidden-props (cdr hidden-props)))))))
 	;; catch the thing
-	(setq catch (buffer-substring (point-at-bol) (point-max)))
+	(setq catch (buffer-substring (line-beginning-position) (point-max)))
 	;; say by by to capture buffer
 	(kill-buffer (current-buffer))
 	;;
@@ -554,8 +554,8 @@ at the requested destination and then reset the window configuration."
 		   (delete-region (point-min) (point-max)))
 	  (ignore-errors (org-narrow-to-subtree))
 	  (goto-char (point-max))
-	  (goto-char (point-at-bol))
-	  (unless (looking-at "^$") (goto-char (point-at-eol)) (insert "\n")))
+	  (goto-char (line-beginning-position))
+	  (unless (looking-at "^$") (goto-char (line-end-position)) (insert "\n")))
 	(insert catch)
 	(save-buffer)
 	(widen)
@@ -624,13 +624,13 @@ If a file is associated with the current-buffer save it.
   (save-excursion
     (if (org-at-heading-p)
 	(message "Type a title after ***, activate todo: C-c C-t, change priority Shift-up")
-      (let* ((prop (cond ((get-text-property (point-at-bol) 'property))
+      (let* ((prop (cond ((get-text-property (line-beginning-position) 'property))
 			 ((save-excursion (beginning-of-line)
 					  (when (looking-at org-property-re)
 					    (match-string 2))))
 			 (t (error "superman-complete-property: Cannot see a property at point."))))
-	     (text-props (text-properties-at (point-at-bol)))
-	     (complete (or (get-text-property (point-at-bol) 'complete)
+	     (text-props (text-properties-at (line-beginning-position)))
+	     (complete (or (get-text-property (line-beginning-position) 'complete)
 			   (plist-get superman-capture-completion-plist
 				      (intern (concat ":" (downcase prop))))))
 	     value)
@@ -640,9 +640,9 @@ If a file is associated with the current-buffer save it.
 	      ((stringp complete) (message complete))
 	      (t (message "Don't know what to do here")))
 	(when value
-	  (delete-region (point-at-bol) (point-at-eol))
+	  (delete-region (line-beginning-position) (line-end-position))
 	  (insert ":" prop ": " value)
-	  (set-text-properties (point-at-bol) (1+ (point-at-bol)) text-props))))))
+	  (set-text-properties (line-beginning-position) (1+ (line-beginning-position)) text-props))))))
 
 (defun superman-capture-change-priority ()
   (interactive) 
@@ -685,7 +685,7 @@ If a file is associated with the current-buffer save it.
 (defun superman-capture-note (&optional project marker ask)
   (interactive)
   (let ((pro (superman-get-project project ask))
-	(marker (or marker (get-text-property (point-at-bol) 'org-hd-marker))))
+	(marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker))))
     (superman-capture
      pro
      (or marker "Notes")
@@ -697,7 +697,7 @@ If a file is associated with the current-buffer save it.
 (defun superman-capture-text (&optional project marker ask)
   (interactive)
   (let ((pro (superman-get-project project ask))
-	(marker (or marker (get-text-property (point-at-bol) 'org-hd-marker))))
+	(marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker))))
     (save-excursion
       (superman-goto-project project "Text" 'create nil nil nil ":FreeText: t"))
     (superman-capture
@@ -710,7 +710,7 @@ If a file is associated with the current-buffer save it.
   (interactive)
   (let ((pro (superman-get-project project ask))
 	(bookmark (or bookmark ""))
-	(marker (or marker (get-text-property (point-at-bol) 'org-hd-marker))))
+	(marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker))))
     (superman-capture
      pro
      (or marker "Bookmarks")
@@ -727,7 +727,7 @@ defaults to the value of text-property org-hd-marker at bol. If ASK
 is non-nil prompt for project."
   (interactive)
   (let ((pro (superman-get-project project ask))
-	(marker (or marker (get-text-property (point-at-bol) 'org-hd-marker))))
+	(marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker))))
     (superman-capture
      pro
      (or marker "Tasks")
@@ -767,7 +767,7 @@ and in the first cat otherwise."
   (let ((pro (superman-get-project project nil))
 	(scene (current-window-configuration))
 	(cat (superman-current-cat))
-	(marker (get-text-property (point-at-bol) 'org-hd-marker))
+	(marker (get-text-property (line-beginning-position) 'org-hd-marker))
 	(defaults `((hdr " TODO [A] New item")
 		    ("Link" :complete "link to url")
 		    ("FileName" :complete superman-read-file-name)
@@ -847,7 +847,7 @@ index file as LEVEL headings. Then show the updated project view buffer."
   (interactive)
   (let* ((pro (superman-get-project project ask))
 	 (gitp (superman-git-toplevel (superman-get-location pro)))
-	 (marker (get-text-property (point-at-bol) 'org-hd-marker))
+	 (marker (get-text-property (line-beginning-position) 'org-hd-marker))
 	 (heading (if (and marker (superman-current-cat))
 		      marker
 		    "Documents"))
@@ -893,8 +893,8 @@ index file as LEVEL headings. Then show the updated project view buffer."
 file does not need to exist."
   (interactive)
   (let* ((pro (superman-get-project project ask))
-	 (marker (or marker (get-text-property (point-at-bol) 'org-hd-marker)))
-	 (cat-name (get-text-property (point-at-bol) 'cat))
+	 (marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker)))
+	 (cat-name (get-text-property (line-beginning-position) 'cat))
 	 (heading (cond (cat-name)
 			((and marker (superman-current-cat))
 			 marker)
@@ -977,7 +977,7 @@ file does not need to exist."
   "
   (interactive)
   ;; (superman-refresh)
-  (let* ((marker (get-text-property (point-at-bol) 'org-hd-marker))
+  (let* ((marker (get-text-property (line-beginning-position) 'org-hd-marker))
 	 (scene (current-window-configuration)))
     (superman-capture
      `("*S*" (("index" . ,superman-profile)))
@@ -1038,7 +1038,7 @@ which defaults to 'Calendar'. If ASK
 is non-nil prompt for project."
   (interactive)
   (let ((pro (superman-get-project project ask))
-	(marker (or marker (get-text-property (point-at-bol) 'org-hd-marker)))
+	(marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker)))
 	(date (superman-read-date)))
     (superman-capture
      pro
@@ -1219,7 +1219,7 @@ and MIME parts in sub-directory 'mailAttachments' of the project."
 (defun superman-capture-cat (&optional project marker ask)
   (interactive)
   (let ((pro (superman-get-project project ask))
-	(marker (or marker (get-text-property (point-at-bol) 'org-hd-marker))))
+	(marker (or marker (get-text-property (line-beginning-position) 'org-hd-marker))))
     (superman-capture
      pro
      marker 
@@ -1301,10 +1301,10 @@ and MIME parts in sub-directory 'mailAttachments' of the project."
 		    :help "Refresh")))
     (insert "\n\n")
     (goto-char (point-min))
-    (put-text-property (point-at-bol) (point-at-eol) 'git-dir gitdir)
-    (put-text-property (point-at-bol) (point-at-eol) 'nickname (car pro))
-    (put-text-property (point-at-bol) (point-at-eol) 'index profile)
-    (put-text-property (point-at-bol) (point-at-eol) 'redo-cmd `(superman-capture-git-section ,(car pro) ,gitdir))
+    (put-text-property (line-beginning-position) (line-end-position) 'git-dir gitdir)
+    (put-text-property (line-beginning-position) (line-end-position) 'nickname (car pro))
+    (put-text-property (line-beginning-position) (line-end-position) 'index profile)
+    (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd `(superman-capture-git-section ,(car pro) ,gitdir))
     (superman-view-mode)))
 
 

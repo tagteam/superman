@@ -1270,9 +1270,9 @@ If ARG keep only filename at point."
 	   (current-buffer)
 	   (not (get-text-property (point-min) 'project-buffer)))
 	;; manual removal of the file at point
-	(delete-region (point-at-bol) (1+ (point-at-eol)))
-	(while (get-text-property (point-at-bol) 'appendix)
-	  (delete-region (point-at-bol) (1+ (point-at-eol)))))
+	(delete-region (line-beginning-position) (1+ (line-end-position)))
+	(while (get-text-property (line-beginning-position) 'appendix)
+	  (delete-region (line-beginning-position) (1+ (line-end-position)))))
       ;; move 
       (unless arg
 	(unless (next-single-property-change (point) 'filename)
@@ -1668,7 +1668,7 @@ Switches to the corresponding directory of each file."
       (goto-char (1+ (file-list-beginning-of-file-list)))
       (delete-other-windows)
       (split-window-vertically)
-      (while (setq this-file (get-text-property (point-at-bol) 'filename))
+      (while (setq this-file (get-text-property (line-beginning-position) 'filename))
 	(other-window 1)
 	(find-file this-file)
 	(save-restriction
@@ -1677,12 +1677,12 @@ Switches to the corresponding directory of each file."
 	  (while (search-forward string nil t)
 	    (setq 
 	     line-no (number-to-string (line-number-at-pos))
-	     this-line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+	     this-line (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
 	    (put-text-property 0 (length line-no) 'face font-lock-warning-face line-no)
 	    (with-current-buffer display-buffer
 	      (end-of-line)
 	      (insert "\n  " line-no " : " this-line)
-	      (put-text-property (point-at-bol) (point-at-eol) 'file-info t))))
+	      (put-text-property (line-beginning-position) (line-end-position) 'file-info t))))
 	(file-list-next-file 1)))))
 
 (defun file-list-replace-nonstop (&optional file-list)
@@ -1973,7 +1973,7 @@ When ARGS is given it should have the same format as the result of `query-replac
   (interactive)
   (goto-char (point-min))
   (while (re-search-forward "@export " nil t)
-    (kill-region (point) (point-at-eol))))
+    (kill-region (point) (line-end-position))))
 
 (defun file-list-replace (&optional file-list)
   (interactive)
