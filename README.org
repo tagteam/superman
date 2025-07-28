@@ -21,7 +21,8 @@ Add the following lines to your .emacs:
 
 #+BEGIN_SRC  emacs-lisp :export code
 (straight-use-package
- '(ess-smart-equal :type git :host github :repo "tagteam/superman"))  
+ '(superman :type git :host github :repo "tagteam/superman"))
+(require 'superman-manager)
 #+END_SRC
   
 * Todo

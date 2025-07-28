@@ -1498,7 +1498,8 @@ Switches to the corresponding directory of each file."
     (setq file-list-current-file-list
 	  (delete nil (mapcar (lambda (entry)
 				(unless (string= (file-list-make-file-name entry) fname)
-				  entry)) file-list-current-file-list)))
+				  entry))
+			      file-list-current-file-list)))
     (superman-file-list-refresh-display)
     (file-list-beginning-of-file-list)))
 ;; (file-list-switch-to-file-list)))

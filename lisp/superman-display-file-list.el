@@ -125,85 +125,21 @@ file-list display buffers unless DIR matches the directories associated with
 	      (put-text-property (point-min) (1+ (point-min)) 'git-dir (superman-git-toplevel dir)))
 	    (put-text-property (point-min) (1+ (point-min)) 'dir (expand-file-name dir))
 	    (insert " " dir " ")
-	    (unless no-project
-	      (put-text-property (point-min) (1+ (point-min)) 'index (superman-get-index project))
-	      (insert "  " (superman-make-button "Project view" '(:fun superman-view-back :face superman-next-project-button-face :help "Back to :width view."))
-		      "  " (superman-make-button "Git" '(:fun superman-git-display :face superman-next-project-button-face :help "Control project's :width repository."))
-		      "  " (superman-make-button "Todo" '(:fun superman-project-todo :face superman-next-project-button-face :help "View project's :width list."))
-		      "  " (superman-make-button "Time-line" '(:fun superman-project-timeline :face superman-next-project-button-face :help "View project':width timeline."))))
-	    (insert "\n\n"))
+	    (insert "\n\n")
+	    ;; this point indicates the start of the file list
+	    ;; (put-text-property (point-at-bol) (point-at-eol) 'point-file-list-start t)
+	    )
 	;; end of header (new buffers)
 	;; 
 	;; clear file-list section in existing buffer
-	(delete-region 
-	 (previous-single-property-change (point-max) 'point-file-list-start)
-	 (point-max))
-	(goto-char (previous-single-property-change (point-max) 'point-file-list-start))
-	(end-of-line)
-	(insert "\n"))
-      ;; tools
-      (when new-buffer
-	(file-list-tools-button)
-	(insert "\n\n")
-	(file-list-show-tools)
-	(forward-line 2))
-      ;; set filter at point-min
+	(goto-char (point-min))
+	(beginning-of-line 3)
+	(delete-region (point) (point-max)))
+      ;; set current filter as a text-property at point-min
       (put-text-property (point-min) (1+ (point-min)) 'filter-list filter)
-      ;; insert or update filter 
-      (if (eq list 'empty)
-	  (file-list-update-filter-line filter 0)
-	(file-list-update-filter-line filter (length list)))
-      (if new-buffer
-	  (progn
-	    (forward-line 1)
-	    (insert "\n"))
-	(goto-char (previous-single-property-change (point-max) 'point-file-list-start))
-	(delete-region (point-at-bol) (1+ (point-at-eol))))
-      ;; set file list section header
-      (insert  (superman-make-button  "Update list"
-				      '(:fun file-list-reload
-					     :face superman-capture-button-face
-					     :width 13
-					     :help "Update files in mother directory and reload file-list")))
-      ;; set sorted
-      (if sort (insert " Sorted by " (nth 0 sort) " "
-		       (if (nth 1 sort) 
-			   (superman-make-button "(decending)"
-						 `(:fun file-list-sort-ascending
-							:face file-list-action-button-face
-							:width 13
-							:help ,(concat "Change order to ascending by " 
-								       (nth 0 sort) "\n" 
-								       file-list-sort-keys-help-string)))
-			 (superman-make-button "(ascending)"
-					       `(:fun file-list-sort-descending
-						      :face file-list-action-button-face
-						      :width 13
-						      :help ,(concat "Change order to descending by " 
-								     (nth 0 sort) "\n"
-								     file-list-sort-keys-help-string)))))
-	(insert " " (superman-make-button "(unsorted)"
-					  '(:fun file-list-sort-descending
-						 :face file-list-action-button-face
-						 :width 13
-						 :help (concat "Change to ascending file name order.\n" file-list-sort-keys-help-string)))))
-      (insert " ")
-      ;; display mode button
-      (insert (superman-make-button (concat "[mode " (number-to-string level) "]")
-				    '(:fun file-list-toggle-display-mode
-					   :face file-list-action-button-face
-					   :width 13
-					   :help "Toggle display mode")))
-      (insert " ")      
-      ;; display attributes button      
-      (insert (superman-make-button "Attributes"
-				    '(:fun file-list-attributes
-					   :face file-list-action-button-face
-					   :width 13
-					   :help "Toggle attributes mode")))
-      (put-text-property (point-at-bol) (point-at-eol) 'point-file-list-start t)
-      (end-of-line)
-      (insert "\n")
+      ;;
+      ;; inserting file-list
+      ;;
       ;; find maximal length of file-name
       (if (eq list 'empty)
 	  (insert "\nNo files match")
@@ -254,22 +190,8 @@ file-list display buffers unless DIR matches the directories associated with
 	    (when appendix
 	      (insert appendix))
 	    (insert "\n"))))
-	;; clear appendix button
-	(goto-char (next-single-property-change (point-min) 'point-file-list-start))
-	(if (next-single-property-change (point-min) 'appendix)
-	    (unless  (next-single-property-change (point-min) 'clear-appendix)
-	      (goto-char (point-at-eol))
-	      (insert " "(superman-make-button "Clear appendix" 
-					       '(:fun file-list-clear-display
-						      :face file-list-clear-button-face
-						      :props '(clear-appendix t)
-						      :help "Remove search results and file attributes from display.")))
-	      (put-text-property  (point-at-bol) (point-at-eol) 'point-file-list-start t))
-	  (when (next-single-property-change (point-min) 'clear-appendix)	
-	    (delete-region (next-single-property-change (point-min) 'clear-appendix) (point-at-eol))
-	    (put-text-property  (point-at-bol) (point-at-eol) 'point-file-list-start t)))
-	(goto-char (1+ (or (previous-single-property-change (point-max) 'point-file-list-start) 0)))
-	(run-hooks 'superman-file-list-pre-display-hook))))
+      (goto-char (point-min))
+      (run-hooks 'superman-file-list-pre-display-hook))))
 
 
 ;; tools
@@ -386,65 +308,45 @@ file-list display buffers unless DIR matches the directories associated with
 (defun file-list-button-sort-by-name ()
   (interactive)
   (let ((buffer-read-only nil)
-	(reverse (get-text-property (previous-single-property-change (point) 'button) 'reverse))
+	(reverse (get-text-property (point-min) 'reverse))
 	(here (point)))
-    (when (get-text-property (point-at-bol) 'point-file-list-start)
-      (put-text-property
-       (previous-single-property-change (point) 'button)
-       (next-single-property-change (point) 'button)
-       'reverse (not reverse)))
+    (put-text-property (point-min) (1+ (point-min)) 'reverse (not reverse))
     (file-list-sort-by-name reverse)
     (goto-char here)))
 
 (defun file-list-button-sort-by-ext ()
   (interactive)
   (let ((buffer-read-only nil)
-	(reverse (get-text-property (previous-single-property-change (point) 'button) 'reverse))
+	(reverse (get-text-property (point-min) 'reverse))
 	(here (point)))
-    (when (get-text-property (point-at-bol) 'point-file-list-start)
-      (put-text-property
-       (previous-single-property-change (point) 'button)
-       (next-single-property-change (point) 'button)
-       'reverse (not reverse)))
+    (put-text-property (point-min) (1+ (point-min)) 'reverse (not reverse))
     (file-list-sort-by-ext reverse)
     (goto-char here)))
 
 (defun file-list-button-sort-by-path ()
   (interactive)
   (let ((buffer-read-only nil)
-	(reverse (get-text-property (previous-single-property-change (point) 'button) 'reverse))
+	(reverse (get-text-property (point-min) 'reverse))
 	(here (point)))
-    (when (get-text-property (point-at-bol) 'point-file-list-start)
-      (put-text-property
-       (previous-single-property-change (point) 'button)
-       (next-single-property-change (point) 'button)
-       'reverse (not reverse)))
+    (put-text-property (point-min) (1+ (point-min)) 'reverse (not reverse))
     (file-list-sort-by-path reverse)
         (goto-char here)))
 
 (defun file-list-button-sort-by-time ()
   (interactive)
   (let ((buffer-read-only nil)
-	(reverse (get-text-property (previous-single-property-change (point) 'button) 'reverse))
+	(reverse (get-text-property (point-min) 'reverse))
 	(here (point)))
-    (when (get-text-property (point-at-bol) 'point-file-list-start)
-      (put-text-property
-       (previous-single-property-change (point) 'button)
-       (next-single-property-change (point) 'button)
-       'reverse (not reverse)))
+    (put-text-property (point-min) (1+ (point-min)) 'reverse (not reverse))
     (file-list-sort-by-time reverse)
     (goto-char here)))
 
 (defun file-list-button-sort-by-size ()
   (interactive)
   (let ((buffer-read-only nil)
-	(reverse (get-text-property (previous-single-property-change (point) 'button) 'reverse))
+	(reverse (get-text-property (point-min) 'reverse))
 	(here (point)))
-	(when (get-text-property (point-at-bol) 'point-file-list-start)
-	  (put-text-property
-	   (previous-single-property-change (point) 'button)
-	   (next-single-property-change (point) 'button)
-	   'reverse (not reverse)))
+    (put-text-property (point-min) (1+ (point-min)) 'reverse (not reverse))
     (file-list-sort-by-size reverse)
     (goto-char here)))
 
@@ -661,21 +563,6 @@ recursively read, filtered and displayed for bulk operations. "
 		  (progn (backward-char 1) (not (looking-at "\\\\"))))))
     (let ((pos (previous-single-property-change (point) 'filename)))
       (when pos (goto-char (1+ pos))))))
-    ;; (let ((found nil)
-	  ;; (pmin (- (save-excursion
-		     ;; (file-list-beginning-of-file-list)) 1)))
-      ;; (if (and (= file-list-display-level 2)
-	       ;; (save-excursion (beginning-of-line) (looking-at "[ \t\n]+")))
-	  ;; (re-search-backward "^[^ \t\n]" pmin t)
-	;; (skip-chars-backward " \t\n")
-	;; (re-search-backward "[ \t\n]" pmin t)
-	;; (while (and (not found) (not (bobp)))
-	  ;; (backward-char 1)
-	  ;; (if (looking-at "\\\\")
-	      ;; (re-search-backward "[ \t\n]" pmin t)
-	    ;; (forward-char 1)
-	    ;; (setq found 'yes)))
-	;; (skip-chars-forward "\t\n ")))))
 
 (defun file-list-find-end-of-file-name ()
   "Find the end of file-name.
@@ -727,12 +614,11 @@ Returns the point at the end of the file-name."
     (point)))
 
 (defun file-list-beginning-of-file-list ()
-  "Return the point of the beginning of displayed file-list."
+  "Move to and return the point of the beginning of displayed file-list."
   (interactive)
   (when file-list-mode
-    (goto-char (previous-single-property-change (point-max) 'point-file-list-start))
-    (forward-line 1)
-    (beginning-of-line)
+    (goto-char (point-min))
+    (line-beginning-position 3)
     (point)))
 
 (defun file-list-next-file (arg)

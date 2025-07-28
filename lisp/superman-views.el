@@ -3051,13 +3051,16 @@ The value is non-nil unless the user regretted and the entry is not deleted.
 
 (defun superman-property-at-point (prop noerror)
   (interactive)
-  (let* ((pom (cond
+  (if (or (eq major-mode 'org-mode)
+	  ;; FIXME: git view buffers should not be in fundamental-mode
+	  (eq major-mode 'fundamental-mode))
+      (let* ((pom (cond
 	       ((org-get-at-bol 'org-hd-marker))
 	       ((point))
 	       (t (error "Don't know where to look for property"))))
 	 (propval
 	  (superman-get-property pom prop nil)))
-    propval))
+    propval)))
 
 (defun superman-filename-at-point (&optional noerror)
   "If property FileName exists at point return its value."
