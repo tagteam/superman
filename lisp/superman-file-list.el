@@ -16,6 +16,7 @@
 ;; PURPOSE.  See the GNU General Public License for more details.
 
 ;;}}}
+
 ;;{{{ Description:
 ;; The aim is to create a facility which allows to interactively
 ;; find and work with files, which does not require repeated and
@@ -1095,6 +1096,83 @@ or by file-name if there is no sort-key yet"
 ;;}}}
 ;;{{{ file-list actions
 
+(defun file-list-help ()
+  (interactive)
+  (pop-to-buffer (get-buffer-create "*file-list-help*"))
+  (goto-char (point-min))
+  (when (eq (point-min) (point-max))
+    (insert "File-list mode key bindings:
+
+[(return)] file-list-choose-file
+[(control return)]  file-list-choose-file-no-visit
+[(meta return)] file-list-choose-magic
+(kbd SPC) file-list-choose-file-other-window)
+a file-list-mml-attach-file-at-point
+A file-list-mml-attach
+b file-list-previous-file
+c file-list-copy-file-at-point
+C file-list-copy
+d file-list-dired
+e file-list-end-of-file-list
+f file-list-choose-file
+F file-list-find
+g file-list-grep
+h file-list-help
+k file-list-remove-file-at-point
+K file-list-remove
+l file-list-attributes
+L file-list-ls
+m file-list-move-file-at-point
+M file-list-move
+TAB file-list-next-file
+n file-list-next-file
+o file-list-omit-file-at-point
+p file-list-previous-file
+q file-list-quit
+r file-list-rename-file-at-point
+R file-list-rename
+Q file-list-query-replace
+t file-list-toggle-display-mode
+u file-list-reload
+x file-list-shell-command-at-point
+X file-list-shell-command
+y file-list-add
+Control-c file-list-clear-display
+[(delete)] file-list-clear-display
+Control-l file-list-clear-display
+Control-t file-list-toggle-display-mode
+Ss file-list-sort-by-size
+St file-list-sort-by-time
+Sf file-list-sort-by-name
+Sp file-list-sort-by-path
+Se file-list-sort-by-ext
+;; Uu file-list-update
+;; Ud file-list-update-below-dir
+U file-list-update-below-dir
+/s file-list-by-size
+/t file-list-by-time
+/f file-list-by-name
+/e file-list-by-ext
+/p file-list-by-path
+/a file-list-add
+-s file-list-by-size
+-t file-list-by-time
+-f file-list-by-name
+-e file-list-by-ext
+-p file-list-by-path
+-a file-list-add
+
+1 file-list-remove-filter-1
+2 file-list-remove-filter-2
+3 file-list-remove-filter-3
+4 file-list-remove-filter-4
+5 file-list-remove-filter-5
+6 file-list-remove-filter-6
+7 file-list-remove-filter-7
+")
+    (goto-char (point-min))))
+      
+
 (defun file-list-quote-filename (name)
   ;; for shell commands
   (concat "\"" name "\""))
@@ -1679,12 +1757,11 @@ When ARGS is given it should have the same format as the result of `query-replac
 	  )))))
 ;;}}}
 ;;{{{ keybindings for the file-list-display-buffer
+
 (define-key file-list-mode-map [(return)] 'file-list-choose-file)
 (define-key file-list-mode-map [(control return)]  'file-list-choose-file-no-visit)
 (define-key file-list-mode-map [(meta return)] 'file-list-choose-magic)
-(if (featurep 'xemacs)
-    (define-key file-list-mode-map [(space)] 'file-list-choose-file-other-window)
-  (define-key file-list-mode-map (kbd "SPC") 'file-list-choose-file-other-window))
+(define-key file-list-mode-map (kbd "SPC") 'file-list-choose-file-other-window)
 (define-key file-list-mode-map "a" 'file-list-mml-attach-file-at-point)
 (define-key file-list-mode-map "A" 'file-list-mml-attach)
 (define-key file-list-mode-map "b" 'file-list-previous-file)
@@ -1695,6 +1772,7 @@ When ARGS is given it should have the same format as the result of `query-replac
 (define-key file-list-mode-map "f" 'file-list-choose-file)
 (define-key file-list-mode-map "F" 'file-list-find)
 (define-key file-list-mode-map "g" 'file-list-grep)
+(define-key file-list-mode-map "h" 'file-list-help)
 (define-key file-list-mode-map "k" 'file-list-remove-file-at-point)
 (define-key file-list-mode-map "K" 'file-list-remove)
 (define-key file-list-mode-map "l" 'file-list-attributes)
@@ -1760,6 +1838,7 @@ When ARGS is given it should have the same format as the result of `query-replac
   (global-set-key (read-kbd-macro "C-x f P") 'file-list-by-path-below-directory)
   (global-set-key (read-kbd-macro "C-x f l") 'file-list-by-name)
   (global-set-key (read-kbd-macro "C-x f L") 'file-list-by-name-below-directory))
+
 ;;}}}
 ;;{{{ utility functions 
 
@@ -1997,4 +2076,3 @@ When ARGS is given it should have the same format as the result of `query-replac
 (provide 'superman-file-list)
 
 ;; superman-file-list.el ends here
-
