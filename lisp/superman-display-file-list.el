@@ -147,8 +147,6 @@ file-list display buffers unless DIR matches the directories associated with
 	  (let ((maxfile (apply 'max (mapcar #'(lambda (x) (length (car x))) list))))
 	    (setcdr (assoc "width" (assoc "FileName" balls)) `(,maxfile))))
 	;; insert the file-list 
-	;; (when (= level 5)
-	;; (setq list (file-list-attributes list t)))
 	(dolist (el list)
 	  (let* ((file (car el))
 		 (path (cadr el))
@@ -184,14 +182,16 @@ file-list display buffers unless DIR matches the directories associated with
 				(put-text-property 0 (length line) 'appendix t line)
 				line)))
 		(setq rest (cdr rest))))
-	    ;; each beginning line has the filename saved as text-property
+	    ;; each point at the beginning of a line has the filename saved as text-property
 	    (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'filename (file-list-make-file-name el))
 	    (put-text-property (line-beginning-position) (1+ (line-beginning-position)) 'superman-item-marker t)
 	    (when appendix
 	      (insert appendix))
 	    (insert "\n"))))
+      (run-hooks 'superman-file-list-pre-display-hook)
       (goto-char (point-min))
-      (run-hooks 'superman-file-list-pre-display-hook))))
+      (goto-char (line-end-position))
+      (re-search-forward "." nil t))))
 
 
 ;; tools
