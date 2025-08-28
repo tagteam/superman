@@ -188,7 +188,7 @@ file-list display buffers unless DIR matches the directories associated with
 	    (when appendix
 	      (insert appendix))
 	    (insert "\n"))))
-      (run-hooks 'superman-file-list-pre-display-hook)
+      (run-hooks 'superman-file-list-post-display-hook)
       (goto-char (point-min))
       (goto-char (line-end-position))
       (re-search-forward "." nil t))))

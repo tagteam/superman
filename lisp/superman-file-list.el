@@ -1258,7 +1258,7 @@ If ARG keep only filename at point."
       (if is-manual (setcar ff hf) (setq ff (append hf ff)))
       ;; set filter and adapt number of files
       (put-text-property (point-min) (1+ (point-min)) 'filter-list ff)
-      (file-list-update-filter-line ff (length file-list-current-file-list))
+      ;; (file-list-update-filter-line ff (length file-list-current-file-list))
       ;; modifiy file-list
       (if arg
 	  (superman-display-file-list
@@ -1272,16 +1272,14 @@ If ARG keep only filename at point."
 	;; manual removal of the file at point
 	(delete-region (line-beginning-position) (1+ (line-end-position)))
 	(while (get-text-property (line-beginning-position) 'appendix)
-	  (delete-region (line-beginning-position) (1+ (line-end-position)))))
+	  (delete-region (line-beginning-position) (1+ (line-end-position))))))))
       ;; move 
-      (unless arg
-	(unless (next-single-property-change (point) 'filename)
-	  (forward-line -1))
-	;; (previous-single-property-change (point-max) 'point-file-list-start))
-	;; (goto-char (1+ (previous-single-property-change (point-max) 'point-file-list-start))))
-	(when (< (point) 
-		 (previous-single-property-change (point-max) 'point-file-list-start))
-	  (goto-char (1+ (previous-single-property-change (point-max) 'point-file-list-start))))))))
+      ;; (unless arg
+	;; (unless (next-single-property-change (point) 'filename)
+	  ;; (forward-line -1))
+	;; (when (< (point) 
+		 ;; (previous-single-property-change (point-max) 'point-file-list-start))
+	  ;; (goto-char (1+ (previous-single-property-change (point-max) 'point-file-list-start))))))))
   
 
 (defun file-list-find (arg &optional file-list)
