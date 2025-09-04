@@ -199,7 +199,12 @@ Enabling superman-export mode electrifies the superman-export buffer for project
   "Find and apply target specific export function. Targets are defined 
 in `superman-org-export-target-list' and for target TARGET the export function 
 is either called superman-export-as-TARGET or org-export-to-TARGET."
-  (let* ((target (or target superman-org-export-target))
+  (let* ((target (or target
+		     (save-excursion
+		       (goto-char (point-min))
+		       (re-search-forward "superman-org-export-target:[ ]*\\([a-zA-Z]+\\)" nil t)
+		       (match-string-no-properties 1))
+		     superman-org-export-target))
 	 (super-candidate (intern (concat "superman-export-as-" target)))
 	 (org-candidate (intern (concat "org-" target "-export-to-" target))))
     (cond ((functionp super-candidate)
