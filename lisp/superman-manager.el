@@ -928,20 +928,25 @@ If NOSELECT is set return the project."
   "Browse the html version of the current file using `browse-url'. If
         prefix arg is given, then browse the corresponding file on the superman-public-server"
   (interactive "P")
-  (let ((superman-candidate (intern (concat "superman-browse-org-export-target-" superman-org-export-target))))
+  (let ((superman-candidate (intern (concat "superman-browse-org-export-target-" superman-org-export-target)))
+	(target (or (save-excursion
+		       (goto-char (point-min))
+		       (when  (re-search-forward "superman-org-export-target:[ ]*\\([a-zA-Z]+\\)" nil t)
+			 (match-string-no-properties 1)))
+		    superman-org-export-target)))
     (cond ((and (not arg) (functionp superman-candidate))
 	   (funcall superman-candidate))
-	  ((or (string= superman-org-export-target "exercise")
-	       (string= superman-org-export-target "opgave"))
+	  ((or (string= target "exercise")
+	       (string= target "opgave"))
 	   (let ((bf (buffer-file-name (current-buffer)))
 		 (pdf-file (concat (file-name-sans-extension (buffer-file-name)) ".pdf")))
 	     (message pdf-file)
 	     (org-open-file pdf-file)))
 	  (t 
-	   (let ((target (concat (file-name-sans-extension (buffer-file-name)) "." superman-org-export-target)))
-	     (if (file-exists-p target)
-		 (org-open-file target)
-	       (message (concat "No such file: " target))))))))
+	   (let ((target-file (concat (file-name-sans-extension (buffer-file-name)) "." target)))
+	     (if (file-exists-p target-file)
+		 (org-open-file target-file)
+	       (message (concat "No such file: " target-file))))))))
 
 
 (defun superman-set-publish-alist ()
