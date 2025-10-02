@@ -202,7 +202,7 @@ is either called superman-export-as-TARGET or org-export-to-TARGET."
   (let* ((target (or target
 		     (save-excursion
 		       (goto-char (point-min))
-		       (re-search-forward "superman-org-export-target:[ ]*\\([a-zA-Z]+\\)" nil t)
+		       (re-search-forward "superman\\(-org\\)?-export-target:[ ]*\\([a-zA-Z]+\\)" nil t)
 		       (match-string-no-properties 1))
 		     superman-org-export-target))
 	 (super-candidate (intern (concat "superman-export-as-" target)))

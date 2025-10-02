@@ -217,8 +217,6 @@ and an action a one-optional-argument function which must return a buffer.")
 (defvar superman-human-readable-ext "^[^\\.].*\\.org\\|\\.[rR]\\|\\.tex\\|\\.txt\\|\\.el$" "Extensions of human readable files")
 (defvar superman-config-cycle-pos 0 "Position in the current window configuration cycle. Starts at 0.")
 (defvar superman-export-subdirectory "export")
-(defvar superman-public-directory "~/public_html/")
-(defvar superman-public-server "" "Place on the web where pages are published.")
 (defvar superman-export-base-extension "html\\|png\\|jpg\\|org\\|pdf\\|R")
 (defvar superman-create-project-directory t
   "In the process of creating a new project, this variable decides about
@@ -922,13 +920,13 @@ If NOSELECT is set return the project."
 ;;}}}
 ;;{{{ publishing project contents
 
-(defvar superman-public-server-home nil "String indicating a place on the web where org to html exports are published.")
-
 (defun superman-browse-this-file (&optional arg)
-  "Browse the html version of the current file using `browse-url'. If
-        prefix arg is given, then browse the corresponding file on the superman-public-server"
+  "Browse the html version of the current file using `browse-url'"
   (interactive "P")
-  (let ((superman-candidate (intern (concat "superman-browse-org-export-target-" superman-org-export-target)))
+  (if (string= "html" (file-name-extension (buffer-file-name (current-buffer))))
+      (browse-url (buffer-file-name (current-buffer)))
+  (let ((superman-candidate (intern (concat "superman-browse-org-export-target-"
+					    superman-org-export-target)))
 	(target (or (save-excursion
 		       (goto-char (point-min))
 		       (when  (re-search-forward "superman-org-export-target:[ ]*\\([a-zA-Z]+\\)" nil t)
@@ -946,7 +944,7 @@ If NOSELECT is set return the project."
 	   (let ((target-file (concat (file-name-sans-extension (buffer-file-name)) "." target)))
 	     (if (file-exists-p target-file)
 		 (org-open-file target-file)
-	       (message (concat "No such file: " target-file))))))))
+	       (message (concat "No such file: " target-file)))))))))
 
 
 (defun superman-set-publish-alist ()
@@ -958,12 +956,7 @@ If NOSELECT is set return the project."
 	     (base-directory (superman-get-location pro))
 	     (export-directory
 	      (concat base-directory "/"
-		      superman-export-subdirectory))
-	     (public-directory
-	      (or (superman-get-publish-directory pro)
-		  (concat (file-name-as-directory superman-public-directory)
-			  nickname))))
-	;;(replace-regexp-in-string superman-public-directory (getenv "HOME") (expand-file-name export-directory))))
+		      superman-export-subdirectory)))
 	(add-to-list 'org-publish-project-alist
 		     `(,(concat nickname "-export")
 		       :base-directory
@@ -982,8 +975,6 @@ If NOSELECT is set return the project."
 		       ,export-directory
 		       :base-extension
                        ,superman-export-base-extension
-		       :publishing-directory
-		       ,public-directory
 		       :recursive t
 		       :publishing-function
 		       org-publish-attachment))
