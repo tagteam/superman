@@ -70,9 +70,6 @@
 ;;; there are many. please let me know by email: tag@biostat.ku.dk
 ;;
 ;;}}}
-;;{{{ autoload
-(require 'superman-display-file-list)
-;;}}}
 ;;{{{ variables
 
 (defgroup file-list nil

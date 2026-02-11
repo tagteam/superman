@@ -27,8 +27,8 @@
 (require 'org)
 (require 'org-macs)
 (require 'org-agenda)
-(require 'superman-git)
 (require 'ol)
+(require 'superman-git)
 ;;{{{ Variables
 
 (defvar superman-column-separator 2 "Number of characters between columns")

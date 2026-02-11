@@ -30,6 +30,9 @@
 ;;; Code:
 
 ;;{{{ superman 
+(require 'superman-view)
+(require 'org)
+(require 'cl-lib)
 
 (defvar superman-greetings 
   "The project manager helps you to switch between your projects."
@@ -231,7 +234,6 @@ the existing properties."
 
 (defun superman-defaults ()
   "Create an alist of superman options."
-  (require 'superman-manager)
   `((superman-default-directory ,superman-default-directory)
     (superman-default-category ,(or superman-default-directory "Krypton"))
     (superman-org-location ,superman-org-location)

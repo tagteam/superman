@@ -1,6 +1,6 @@
 ;;; superman-manager.el --- org project manager
 
-;; Copyright (C) 2013-2022  Thomas Alexander Gerds
+;; Copyright (C) 2013-2026  Thomas Alexander Gerds
 
 ;; Authors:
 ;; Thomas Alexander Gerds <tag@biostat.ku.dk>
@@ -32,6 +32,10 @@
 
 ;; External dependencies
 (require 'org)  
+(require 'org-agenda)
+(require 'org-capture)
+(require 'org-element)
+(require 'org-id)
 (require 'deft nil t) ;; http://jblevins.org/git/deft.git
 (require 'popup nil t) ;; https://github.com/auto-complete/popup-el.git
 (require 'winner) 
@@ -42,13 +46,12 @@
 (require 'cl-macs)
 
 ;; Loading extensions
-
-	     
-
 (defvar superman-default-directory (expand-file-name "~")
   ;; (file-name-as-directory
   ;; (expand-file-name (file-name-directory superman-profile)))
   "Default place for new projects.")
+(defvar superman-view-mode-map (make-sparse-keymap)
+  "Keymap used for `superman-view-mode' commands.")
 
 (require 'superman) ;; a project to manage projects
 (require 'superman-views)    ;; project views
@@ -59,7 +62,7 @@
 (require 'superman-export)   ;; org export help
 (require 'superman-google)   ;; google calendar support
 (require 'superman-faces)    ;; highlighting
-(require 'superman-file-list);; work with lists of files 
+(require 'superman-file-list);; work with lists of files
 (if (featurep 'deft)
     (require 'superman-deft))     ;; selecting projects via deft
 
