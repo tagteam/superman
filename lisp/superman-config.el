@@ -302,7 +302,6 @@ given in superman notation."
 
 ;;}}}
 ;;{{{ functions that find things
-
 (defun superman-find-index (project)
   (let* ((index (superman-get-index project)))
     (unless (file-exists-p index)
@@ -311,52 +310,8 @@ given in superman notation."
       (make-directory (file-name-directory index) 'with-parents))
     (find-file index)))
 
-
 (defun superman-location (project)
   (find-file (superman-get-location project)))
-
-(defun superman-project-timeline (&optional project)
-  "Display a project specific timeline based on the index file."
-  (interactive)
-  (let* ((project (superman-get-project project))
-	 (index (superman-get-index project))
-	 (loc (superman-project-home project))
-	 (nick (car project))
-	 (org-agenda-window-setup 'current-window)
-	 (org-agenda-sticky nil)
-	 (org-agenda-redo-command 'superman-project-timeline)
-	 (org-agenda-buffer-name (concat "*Timeline[" (car project) "]*"))
-	 (org-agenda-finalize-hook
-	  (lambda ()
-	    (save-excursion
-	      (goto-char (point-min))
-	      (delete-region (line-beginning-position) (1+ (line-end-position)))
-	      (insert 
-	       "Project ToDo list")
-	      (put-text-property (line-beginning-position) (line-end-position) 'redo-cmd `(superman-project-timeline ,nick))
-	      (put-text-property (line-beginning-position) (line-end-position) 'git-dir (superman-git-toplevel loc))
-	      (put-text-property (line-beginning-position) (line-end-position) 'dir loc)
-	      (put-text-property (line-beginning-position) (line-end-position) 'nickname nick)
-	      (put-text-property (line-beginning-position) (line-end-position) 'index index)
-	      (insert
-	       "  " (superman-make-button "Project view" '(:fun superman-view-back :face superman-next-project-button-face  :help "Back to project view."))
-	       "  " (superman-make-button "Git" '(:fun superman-git-display :face superman-next-project-button-face :help "Control project's git repository."))
-	       "  " (superman-make-button "File-list" '(:fun superman-view-file-list :face superman-next-project-button-face :help "View project's file-list."))
-	       "  " (superman-make-button "Todo" '(:fun superman-project-todo :face superman-next-project-button-face :help "View project's todo list."))
-	       "\n")))))
-    (if (file-exists-p index)
-	(progn
-	  ;; we need to be 100% sure that the agenda is not accidentally 
-	  ;; written to the index file, but how?
-	  (switch-to-buffer
-	   (get-buffer-create org-agenda-buffer-name))
-	  (find-file index)
-	  (push ?L unread-command-events)
-	  (call-interactively 'org-agenda))
-      (switch-to-buffer
-       (get-buffer-create org-agenda-buffer-name))
-      (insert "Empty time-line (project index file does not yet exist."))))
-
 
 (defun superman-recent-org (project)
   (car (superman-list-files
@@ -380,7 +335,7 @@ given in superman notation."
       
 
 ;;}}}
-;;{{{ superman-shell
+;;{{{ superman open shell
 (defun superman-goto-shell ()
   "Switches to *shell* buffer. "
   (interactive)

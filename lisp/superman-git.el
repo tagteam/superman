@@ -23,9 +23,6 @@
 
 ;;; Code:
 
-(require 'superman)
-(require 'superman-views)
-
 ;;{{{ variables
 
 
