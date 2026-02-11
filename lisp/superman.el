@@ -30,7 +30,7 @@
 ;;; Code:
 
 ;;{{{ superman 
-(require 'superman-view)
+(require 'superman-views)
 (require 'org)
 (require 'cl-lib)
 
