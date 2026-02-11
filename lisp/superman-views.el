@@ -23,6 +23,12 @@
 
 ;; Code:
 
+(require 'outline)
+(require 'org)
+(require 'org-macs)
+(require 'org-agenda)
+(require 'superman-git)
+(require 'ol)
 ;;{{{ Variables
 
 (defvar superman-column-separator 2 "Number of characters between columns")
@@ -154,6 +160,7 @@ Column showing the todo-state
 ;;{{{ faces
 ;; FIXME
 ;;}}}
+
 ;;{{{ Trim stuff and frequently used funs
 
 (defun superman-trim-string (str &rest args)

@@ -20,7 +20,12 @@
 
 ;;; Commentary:
 
-;; 
+;;
+(require 'superman)
+(require 'superman-file-list)
+(require 'superman-config)
+(require 'superman-faces)
+(require 'superman-git)
 
 ;;; Code:
 
