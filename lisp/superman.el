@@ -28,8 +28,6 @@
 ;; A: Nice question. Some answers are in here: www.logicomix.com
 
 ;;; Code:
-
-;;{{{ superman 
 (require 'superman-views)
 (require 'org)
 (require 'cl-lib)
@@ -281,7 +279,6 @@ the existing properties."
 			 :help "TodoList across all projects"))
    "\n"))
 
-;;}}}
 ;;{{{ balls and format
 
 (defvar superman-balls

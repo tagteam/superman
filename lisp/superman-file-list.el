@@ -627,14 +627,13 @@ and matching files."
 ;;mapcar this function on a file-list ...
 (defun file-list-make-file-name (entry)
   "Concats path-name and file-name of entry."
-  (concat (cadr entry) (car entry)))
+  (substring-no-properties (concat (cadr entry) (car entry))))
 
 
 (defun file-list-make-file-name~ (entry)
   "Concats path-name and file-name of entry."
   (replace-regexp-in-string (getenv "HOME") "~"
-			    (concat
-			     (cadr entry) (car entry))))
+			    (file-list-make-file-name entry)))
 
 
 (defun file-list-make-entry (filename)
@@ -1927,8 +1926,8 @@ When ARGS is given it should have the same format as the result of `query-replac
 					;  (save-window-excursion
   (let* ((file-list (or file-list file-list-current-file-list))
 	 (flist (mapcar 'file-list-make-file-name file-list))
-	 (active (string= (buffer-name (current-buffer))
-			  file-list-display-buffer))
+	 (active (string-match "^File-list:" (buffer-name (current-buffer))))
+			  ;; file-list-display-buffer))
 	 (buf (cond ((not active) (current-buffer))
 		    ((string-match "mail" (buffer-name file-list-reference-buffer))
 		     file-list-reference-buffer)
@@ -1939,6 +1938,8 @@ When ARGS is given it should have the same format as the result of `query-replac
 						(buffer-list)) t))))
 	 file type description)
     (switch-to-buffer buf)
+    (goto-char (point-max))
+    (insert "\n")
     (while flist
       (setq file (car flist)
 	    type (mm-default-file-type file)

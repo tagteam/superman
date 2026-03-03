@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;;; superman-git.el --- Summary of project contents and adding information to projects
 
 ;; Copyright (C) 2012-2022  Klaus Kähler Holst, Thomas Alexander Gerds
@@ -114,8 +115,8 @@ and after CMD, respectively."
 ;;{{{ push, pull, diff, branch and other global git actions 
 
 (defun superman-git-root (file)
-  (interactive)  
   "Return git root of FILE"
+  (interactive)  
   (replace-regexp-in-string
    "\n$" "" 
    (shell-command-to-string
@@ -803,8 +804,8 @@ git command."
 	    (superman-redo-cat)))))))
 
 (defun superman-git-format-display (view-buf dir props index-buf name)
-  "Usually called via `superman-git-display' and
-`superman-redo-cat' by `superman-format-cat' to format git displays.
+  "Usually called by `superman-git-display',
+`superman-redo-cat' and `superman-format-cat' to format git displays.
 
 If directory is not yet git controlled provide a button which when
 pressed initializes git control.
@@ -814,20 +815,20 @@ DIR is a directory, the git repository.
 
 PROPS is a plist with properties which should contain the
 keywords git-cycle and git-display.
-The 'active display' is the first existing thing of 
+The active display is the first existing thing of 
  a) text-property 'git-display at point-min in VIEW-BUF
- b) the value of keyword 'git-display' in PROPS 
- c) the car of the value of key 'git-cycle' in PROPS. I.e., this can be set
+ b) the value of keyword `git-display' in PROPS 
+ c) the car of the value of key `git-cycle' in PROPS. I.e., this can be set
     as a property of heading git-repository in a project's index buffer).
 
 The actual git command, balls, pre- and post-hooks are obtained from value of
-the 'active display' in `superman-git-display-command-list'. 
+the active display in `superman-git-display-command-list'. 
 
 INDEX-BUF is the buffer which contains the pre-formatted results of the
 git command. NAME is used to make the section heading.
  "
   (set-buffer view-buf)
-  (setq view-point (point))
+  (let ((view-point (point)))
   (if (not (get-text-property (point-min) 'git-dir))
       (progn
 	(switch-to-buffer view-buf)
@@ -942,7 +943,7 @@ git command. NAME is used to make the section heading.
 		 :help "Set limit of items in list (versions/commits/etc.)"))))
       (when post-hook 
 	(goto-char (point-max))
-	(funcall post-hook)))))
+	(funcall post-hook))))))
 
 (defun superman-git-insert-subdirectories (list git-dir)
   (let ((gdirs list))
